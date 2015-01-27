@@ -1,3 +1,3 @@
-function order_command__run() {
+function bst_order_command__run() {
   echo "order with $@"
 }
