@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function _run_tests() {
+  _configure_global_variables
+  _source_required_modules
+  release__concatenate_sources_in_release_file
+  _source_program_for_tests
+  shebang_unit "$@" "${TESTS_DIR}"
+}
+
+function _source_required_modules() {
+	source "${SOURCES_DIR}/release.sh"
+}
+
+function _configure_global_variables() {
+  local root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.."; pwd)"
+  SOURCES_DIR="${root_dir}/sources"
+  TESTS_DIR="${root_dir}/tests"
+}
+
+function _source_program_for_tests() {
+  source "$(release__get_released_artifact_file)"
+}
+
+_run_tests "$@"
