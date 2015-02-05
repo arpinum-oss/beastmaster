@@ -1,4 +1,5 @@
 function bst_program__run() {
+  bst_config__load
   (( $# == 0 )) && _bst_program__print_usage_and_exit_normally
   _bst_program__parse_arguments "$@"
 }
@@ -53,7 +54,7 @@ function _bst_program__print_illegal_option_and_fail() {
 
 function _bst_program__print_usage() {
   echo "\
-Usage: bst COMMAND [arg...]
+Usage: bst <command> [arg...]
 
 A Bash tool which can run any command in your favorite projects.
 
@@ -67,5 +68,5 @@ Commands:
   order   Execute a command in the project directory
   tame    Add a project to the project list
 
-Run 'bst COMMAND --help' for more information on a command."
+Run 'bst <command> --help' for more information on a command."
 }

@@ -1,4 +1,5 @@
 header
+core/config
 commands/config_command
 commands/free_command
 commands/list_command

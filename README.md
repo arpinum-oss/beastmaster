@@ -9,7 +9,15 @@ Example:
 
     bst order my_project "git pull origin master"
 
-Work in progress, stay tuned.
+## Development progress
+
+Overall progress: 5%, stay tuned :)
+
+* bst config: done \o/
+* bst free: todo
+* bst list: todo
+* bst order: todo
+* bst tame: todo
 
 ## Taming projects
 
@@ -70,7 +78,7 @@ Sometimes the cutest pet may turn out to be perfectly useless. The `free` comman
 
 If you want to clean the mess, open the configuration file:
 
-    > nano ~/.bst/pets.config
+    > nano ~/.bstconfig
 
 Pro tip: if the `EDITOR` global variable is set, you can also use the `config` shortcut:
 
