@@ -20,12 +20,12 @@ Print your project list."
 
 function _bst_list_command__list_projects() {
   local line
-  while read line; do
+  for line in $(bst_config__project_lines); do
     local name="$(bst_project__name_from_line "${line}")"
     local dir="$(bst_project__directory_from_line "${line}")"
     local tags="$(_bst_list_comand__tags_from_line "${line}")"
     system__print_line "${name} at ${dir}${tags}"
-  done < "$(bst_config__config_file)"
+  done
 }
 
 function _bst_list_comand__tags_from_line() {

@@ -23,13 +23,22 @@ function bst_config__load() {
   bst_config__ensure_config_file_exists
 }
 
-function bst_config__config_file() {
-  system__print "${BST__CONFIG_DIR}/config"
+function bst_config__ensure_config_file_exists() {
+  if [[ ! -f "$(bst_config__config_file)" ]]; then
+    mkdir -p "${BST__CONFIG_DIR}"
+    system__print_line "# project_name:/project/dir:tag1:tag2" > "$(bst_config__config_file)"
+  fi
 }
 
-function bst_config__ensure_config_file_exists() {
-  mkdir -p "${BST__CONFIG_DIR}"
-  touch "$(bst_config__config_file)"
+function bst_config__project_lines() {
+  local line
+  while read line; do
+    [[ "${line}" != \#* ]] && system__print_line "${line}"
+  done < "$(bst_config__config_file)"
+}
+
+function bst_config__config_file() {
+  system__print "${BST__CONFIG_DIR}/config"
 }
 
 
@@ -63,17 +72,6 @@ function system__print_array() {
   for element in "$@"; do
     system__print_line "${element}"
   done
-}
-
-function can_print_array() {
-  local array=("a" "123" "hello")
-
-  local string="$(system__print_array "${array[@]}")"
-
-  local expected="a
-123
-hello"
-  assertion__equal "${expected}" "${string}"
 }
 
 
@@ -228,12 +226,12 @@ Print your project list."
 
 function _bst_list_command__list_projects() {
   local line
-  while read line; do
+  for line in $(bst_config__project_lines); do
     local name="$(bst_project__name_from_line "${line}")"
     local dir="$(bst_project__directory_from_line "${line}")"
     local tags="$(_bst_list_comand__tags_from_line "${line}")"
     system__print_line "${name} at ${dir}${tags}"
-  done < "$(bst_config__config_file)"
+  done
 }
 
 function _bst_list_comand__tags_from_line() {

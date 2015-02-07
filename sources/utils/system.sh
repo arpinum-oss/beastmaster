@@ -29,14 +29,3 @@ function system__print_array() {
     system__print_line "${element}"
   done
 }
-
-function can_print_array() {
-  local array=("a" "123" "hello")
-
-  local string="$(system__print_array "${array[@]}")"
-
-  local expected="a
-123
-hello"
-  assertion__equal "${expected}" "${string}"
-}

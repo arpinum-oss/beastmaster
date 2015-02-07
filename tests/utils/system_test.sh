@@ -21,3 +21,14 @@ function a_not_contained_value_is_not_contained_by_the_array() {
 
   assertion__failing system__array_contains "the" "${array[@]}"
 }
+
+function can_print_array() {
+  local array=("a" "123" "hello")
+
+  local string="$(system__print_array "${array[@]}")"
+
+  local expected="a
+123
+hello"
+  assertion__equal "${expected}" "${string}"
+}
