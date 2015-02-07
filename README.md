@@ -1,9 +1,9 @@
-# Beastmaster (bst)
+# Beastmaster (bst) [![Etat build travis]](https://travis-ci.org/arpinum/beastmaster)
 
 > A beast does not know that he is a beast, and the nearer a man gets to being a beast, the less he knows it.
 > <cite>(George MacDonald)</cite>
 
-**Beastmaster** is a Bash tool which can run any command in your favorite projects.
+**Beastmaster** is a Bash tool which can run any command in your favorite projects (aka pets).
 
 Example:
 
@@ -104,3 +104,4 @@ Copyright (C) 2015, Arpinum
 You should have received a copy of the GNU General Public License along with **Beastmaster**.  If not, see [http://www.gnu.org/licenses/lgpl.html].
 
 [http://www.gnu.org/licenses/lgpl.html]: http://www.gnu.org/licenses/lgpl.html    
+[Etat build travis]: https://travis-ci.org/arpinum/beastmaster.png?branch=master
