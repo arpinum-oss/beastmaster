@@ -18,11 +18,22 @@ function should_open_config_file_in_editor() {
   EDITOR=_mock_editor
   BST__CONFIG_DIR="${TMP_DIR}/config${RANDOM}"
 
-  result="$(bst_config_command__run)"
+  local result="$(bst_config_command__run)"
 
   assertion__equal "editor called with: ${BST__CONFIG_DIR}/config" "${result}"
 }
 
 function _mock_editor() {
   echo "editor called with: $@"
+}
+
+function should_fail_if_editor_is_not_set() {
+  EDITOR=""
+  BST__CONFIG_DIR="${TMP_DIR}/config${RANDOM}"
+  local message
+
+  message="$(bst_config_command__run)"
+
+  assertion__status_code_is_failure $?
+  assertion__string_contains "${message}" "EDITOR environment variable must be set"
 }
