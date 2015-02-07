@@ -3,7 +3,7 @@
 > A beast does not know that he is a beast, and the nearer a man gets to being a beast, the less he knows it.
 > <cite>(George MacDonald)</cite>
 
-**Beastmaster** is a Bash tool which can run any command in your favorite projects (aka pets).
+**Beastmaster** is a Bash tool which can run any command in your favorite projects (aka projects).
 
 Example:
 
@@ -21,7 +21,7 @@ Overall progress: **15%**, stay tuned :)
 
 ## Taming projects
 
-First you have to tame your pets to keep them close. Use `tame` command.
+First you have to tame your project to keep them close. Use `tame` command.
 
 Go in your project and type `bst tame`:
 
@@ -33,7 +33,7 @@ You can choose a name if the default name does not suit you (the path basename):
 
     > bst tame --name=cool_project
 
-Since they all look the same you can tag your pets to recognize them. Use `--tags=name1,name2` option when taming:
+Since they all look the same you can tag your projects to recognize them. Use `--tags=name1,name2` option when taming:
 
     > bst tame --tags=cat_related,java
 
@@ -45,15 +45,15 @@ After having tamed your little army, it's time to order some commands to test yo
 
 Each command are run in the project directory.
 
-If you want to refresh a single pet:
+If you want to refresh a single project:
 
     > bst order my_project "git pull origin master"
 
-To check the status of all pets tagged as git:
+To check the status of all projects tagged as git:
 
     > bst order --tags=git "git status"
 
-To run the tests of all pets named like "js_project*"
+To run the tests of all projects named like "js_project*"
 
     > bst order "js_project*" "npm test"
 
@@ -61,7 +61,7 @@ Do not forget the "..." to prevent some tricky string interpolation.
 
 ## List your projects to review the army
 
-If you don't remember all the minions you have, just use the `list` command to display all the pets.
+If you don't remember all the minions you have, just use the `list` command to display all the projects.
 
     > bst list
     cool-project at /home/alone/dev/cool-project #java #git #hobby
@@ -69,7 +69,7 @@ If you don't remember all the minions you have, just use the `list` command to d
 
 ## Free a project when you are done with it
 
-Sometimes the cutest pet may turn out to be perfectly useless. The `free` command can handle this situation.
+Sometimes the cutest project may turn out to be perfectly useless. The `free` command can handle this situation.
 
     > bst free my_project
     my_project is running away...

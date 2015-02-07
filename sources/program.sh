@@ -24,17 +24,17 @@ function _bst_default_command__usage() {
   system__print "\
 Usage: bst <command> [arg...]
 
-A Bash tool which can run any command in your favorite projects.
+A Bash tool which can run any command in your favorite projects (aka pets).
 
 Options:
   -h, --help  Print usage
 
 Commands:
   config  Edit the configuration
-  free    Remove a project from the project list
-  list    Print the project list
+  free    Remove a project from your project list
+  list    Print your project list
   order   Execute a command in the project directory
-  tame    Add a project to the project list
+  tame    Add a project to your project list
 
 Run 'bst <command> --help' for more information on a command."
 }

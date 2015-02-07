@@ -143,30 +143,30 @@ function _namespace() {
 }
 
 
-function bst_pet__name_from_line() {
-  _bst_pet__first_token "$1"
+function bst_project__name_from_line() {
+  _bst_project__first_token "$1"
 }
 
-function bst_pet__directory_from_line() {
-  local without_name="$(_bst_pet__without_first_token "$1")"
-  _bst_pet__first_token "${without_name}"
+function bst_project__directory_from_line() {
+  local without_name="$(_bst_project__without_first_token "$1")"
+  _bst_project__first_token "${without_name}"
 }
 
-function bst_pet__tags_from_line() {
-  local without_name="$(_bst_pet__without_first_token "$1")"
-  local only_tags="$(_bst_pet__without_first_token "${without_name}")"
+function bst_project__tags_from_line() {
+  local without_name="$(_bst_project__without_first_token "$1")"
+  local only_tags="$(_bst_project__without_first_token "${without_name}")"
   while [[ -n "${only_tags}" ]]; do
-    _bst_pet__first_token "${only_tags}"
+    _bst_project__first_token "${only_tags}"
     system__print_new_line
-    only_tags="$(_bst_pet__without_first_token "${only_tags}")"
+    only_tags="$(_bst_project__without_first_token "${only_tags}")"
   done
 }
 
-function _bst_pet__first_token() {
+function _bst_project__first_token() {
   system__print "${1%%:*}"
 }
 
-function _bst_pet__without_first_token() {
+function _bst_project__without_first_token() {
   [[ "$1" == *:* ]] && system__print "${1#*:}"
 }
 
@@ -216,28 +216,28 @@ function _bst_list_command__accepted_commands() {
 }
 
 function _bst_list_command__run_default() {
-  _bst_list_command__list_pets
+  _bst_list_command__list_projects
 }
 
 function _bst_list_command__usage() {
   system__print "\
 Usage: bst list
 
-Print the project list."
+Print your project list."
 }
 
-function _bst_list_command__list_pets() {
+function _bst_list_command__list_projects() {
   local line
   while read line; do
-    local name="$(bst_pet__name_from_line "${line}")"
-    local dir="$(bst_pet__directory_from_line "${line}")"
+    local name="$(bst_project__name_from_line "${line}")"
+    local dir="$(bst_project__directory_from_line "${line}")"
     local tags="$(_bst_list_comand__tags_from_line "${line}")"
     system__print_line "${name} at ${dir}${tags}"
   done < "$(bst_config__config_file)"
 }
 
 function _bst_list_comand__tags_from_line() {
-  local tags="$(bst_pet__tags_from_line "$1")"
+  local tags="$(bst_project__tags_from_line "$1")"
   for tag in ${tags[@]}; do
     system__print " #${tag}"
   done
@@ -280,17 +280,17 @@ function _bst_default_command__usage() {
   system__print "\
 Usage: bst <command> [arg...]
 
-A Bash tool which can run any command in your favorite projects.
+A Bash tool which can run any command in your favorite projects (aka pets).
 
 Options:
   -h, --help  Print usage
 
 Commands:
   config  Edit the configuration
-  free    Remove a project from the project list
-  list    Print the project list
+  free    Remove a project from your project list
+  list    Print your project list
   order   Execute a command in the project directory
-  tame    Add a project to the project list
+  tame    Add a project to your project list
 
 Run 'bst <command> --help' for more information on a command."
 }
