@@ -78,7 +78,7 @@ Sometimes the cutest pet may turn out to be perfectly useless. The `free` comman
 
 If you want to clean the mess, open the configuration file:
 
-    > nano ~/.bstconfig
+    > nano ~/.bst/config
 
 Pro tip: if the `EDITOR` global variable is set, you can also use the `config` shortcut:
 
