@@ -1,32 +1,21 @@
 function bst_program__run() {
   bst_config__load
   BST__CURRENT_COMMAND="default"
-  (( $# == 0 )) && _bst_program__print_usage_and_exit_normally
-  _bst_program__parse_arguments "$@"
+  command__run "$@"
 }
 
-function _bst_program__parse_arguments() {
-  local argument
-  for argument in "$@"; do
-    case "${argument}" in
-      -h|--help)
-      command__help_triggered
-      ;;
-      -*|--*)
-      command__illegal_option_parsed "${argument}"
-      ;;
-      *)
-      shift 1
-      _bst_program__run_command "${argument}" "$@"
-    esac
-  done
+function _bst_default_command__accepted_commands() {
+  system__print_array "config" "free" "list" "order" "tame"
 }
 
-function _bst_program__run_command() {
+function _bst_default_command__run_default() {
+  command__help_triggered
+}
+
+function _bst_default_command__run_command() {
   local command="$1"
   shift 1
   local command_function="bst_${command}_command__run"
-  type "${command_function}" > /dev/null 2>&1 || command__illegal_command_parsed "${command}"
   ${command_function} "$@"
   exit 0
 }

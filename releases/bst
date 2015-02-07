@@ -46,13 +46,72 @@ function system__print_new_line() {
   printf "\n"
 }
 
+function system__array_contains() {
+  local value=$1
+  shift 1
+  local i
+  for (( i=1; i <= $#; i++ )); do
+    if [[ "${!i}" == "${value}" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+function system__print_array() {
+  local element
+  for element in "$@"; do
+    system__print_line "${element}"
+  done
+}
+
+function can_print_array() {
+  local array=("a" "123" "hello")
+
+  local string="$(system__print_array "${array[@]}")"
+
+  local expected="a
+123
+hello"
+  assertion__equal "${expected}" "${string}"
+}
+
+
+function command__run() {
+  (( $# == 0 )) && $(_namespace)run_default
+  _command__parse_arguments "$@"
+}
+
+function _command__parse_arguments() {
+  local argument
+  for argument in "$@"; do
+    case "${argument}" in
+      -h|--help)
+      command__help_triggered
+      ;;
+      -*|--*)
+      _command__illegal_option_parsed "${argument}"
+      ;;
+      *)
+      _command__check_command "${argument}"
+      shift 1
+      $(_namespace)run_command "${argument}" "$@"
+    esac
+  done
+}
+
+function _command__check_command() {
+  local accepted_commands=($($(_namespace)accepted_commands))
+  system__array_contains "$1" "${accepted_commands[@]}"
+  (( $? != 0 )) && _command__illegal_command_parsed "$1"
+}
 
 function command__help_triggered() {
   _command__print_usage
   exit 0
 }
 
-function command__illegal_option_parsed() {
+function _command__illegal_option_parsed() {
   local option="${1%=*}"
   option="${option#-}"
   option="${option#-}"
@@ -62,7 +121,7 @@ function command__illegal_option_parsed() {
   exit 1
 }
 
-function command__illegal_command_parsed() {
+function _command__illegal_command_parsed() {
   system__print_line "$(_command__name): illegal command -- $1"
   system__print_new_line
   _command__print_usage
@@ -70,13 +129,17 @@ function command__illegal_command_parsed() {
 }
 
 function _command__print_usage() {
-  system__print_line "$(_bst_${BST__CURRENT_COMMAND}_command__usage)"
+  system__print_line "$($(_namespace)usage)"
 }
 
 function _command__name() {
   [[ "${BST__CURRENT_COMMAND}" == "default" ]] \
     && system__print "bst" \
     || system__print "bst ${BST__CURRENT_COMMAND}"
+}
+
+function _namespace() {
+  system__print "_bst_${BST__CURRENT_COMMAND}_command__"
 }
 
 
@@ -110,7 +173,22 @@ function _bst_pet__without_first_token() {
 
 function bst_config_command__run() {
   BST__CURRENT_COMMAND="config"
+  command__run "$@"
+}
+
+function _bst_config_command__accepted_commands() {
+  :
+}
+
+function _bst_config_command__run_default() {
   "${EDITOR}" "$(bst_config__config_file)"
+}
+
+function _bst_config_command__usage() {
+  system__print "\
+Usage: bst config
+
+Edit the configuration."
 }
 
 
@@ -121,25 +199,15 @@ function bst_free_command__run() {
 
 function bst_list_command__run() {
   BST__CURRENT_COMMAND="list"
-  (( $# == 0 )) && _bst_list_command__list_pets
-  _bst_list_command__parse_arguments "$@"
+  command__run "$@"
 }
 
-function _bst_list_command__parse_arguments() {
-  local argument
-  for argument in "$@"; do
-    case "${argument}" in
-      -h|--help)
-      command__help_triggered
-      ;;
-      -*|--*)
-      command__illegal_option_parsed "${argument}"
-      ;;
-      *)
-      command__illegal_command_parsed "${argument}"
-      ;;
-    esac
-  done
+function _bst_list_command__accepted_commands() {
+  :
+}
+
+function _bst_list_command__run_default() {
+  _bst_list_command__list_pets
 }
 
 function _bst_list_command__usage() {
@@ -180,32 +248,21 @@ function bst_tame_command__run() {
 function bst_program__run() {
   bst_config__load
   BST__CURRENT_COMMAND="default"
-  (( $# == 0 )) && _bst_program__print_usage_and_exit_normally
-  _bst_program__parse_arguments "$@"
+  command__run "$@"
 }
 
-function _bst_program__parse_arguments() {
-  local argument
-  for argument in "$@"; do
-    case "${argument}" in
-      -h|--help)
-      command__help_triggered
-      ;;
-      -*|--*)
-      command__illegal_option_parsed "${argument}"
-      ;;
-      *)
-      shift 1
-      _bst_program__run_command "${argument}" "$@"
-    esac
-  done
+function _bst_default_command__accepted_commands() {
+  system__print_array "config" "free" "list" "order" "tame"
 }
 
-function _bst_program__run_command() {
+function _bst_default_command__run_default() {
+  command__help_triggered
+}
+
+function _bst_default_command__run_command() {
   local command="$1"
   shift 1
   local command_function="bst_${command}_command__run"
-  type "${command_function}" > /dev/null 2>&1 || command__illegal_command_parsed "${command}"
   ${command_function} "$@"
   exit 0
 }

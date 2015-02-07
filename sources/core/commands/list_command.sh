@@ -1,24 +1,14 @@
 function bst_list_command__run() {
   BST__CURRENT_COMMAND="list"
-  (( $# == 0 )) && _bst_list_command__list_pets
-  _bst_list_command__parse_arguments "$@"
+  command__run "$@"
 }
 
-function _bst_list_command__parse_arguments() {
-  local argument
-  for argument in "$@"; do
-    case "${argument}" in
-      -h|--help)
-      command__help_triggered
-      ;;
-      -*|--*)
-      command__illegal_option_parsed "${argument}"
-      ;;
-      *)
-      command__illegal_command_parsed "${argument}"
-      ;;
-    esac
-  done
+function _bst_list_command__accepted_commands() {
+  :
+}
+
+function _bst_list_command__run_default() {
+  _bst_list_command__list_pets
 }
 
 function _bst_list_command__usage() {
