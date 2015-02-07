@@ -1,8 +1,11 @@
 header
-core/config
-commands/config_command
-commands/free_command
-commands/list_command
-commands/order_command
-commands/tame_command
+config
+utils/system
+utils/command
+core/pet
+core/commands/config_command
+core/commands/free_command
+core/commands/list_command
+core/commands/order_command
+core/commands/tame_command
 program

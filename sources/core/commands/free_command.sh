@@ -1,3 +1,3 @@
 function bst_free_command__run() {
-  echo "free with $@"
+  system__print_line "free with $@"
 }

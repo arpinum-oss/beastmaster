@@ -20,10 +20,11 @@
 
 function bst_config__load() {
   BST__CONFIG_DIR="${HOME}/.bst"
+  bst_config__ensure_config_file_exists
 }
 
 function bst_config__config_file() {
-  echo "${BST__CONFIG_DIR}/config"
+  system__print "${BST__CONFIG_DIR}/config"
 }
 
 function bst_config__ensure_config_file_exists() {
@@ -32,34 +33,153 @@ function bst_config__ensure_config_file_exists() {
 }
 
 
+function system__print_line() {
+  system__print "$1"
+  system__print_new_line
+}
+
+function system__print() {
+  printf "%s" "$1"
+}
+
+function system__print_new_line() {
+  printf "\n"
+}
+
+
+function command__help_triggered() {
+  _command__print_usage
+  exit 0
+}
+
+function command__illegal_option_parsed() {
+  local option="${1%=*}"
+  option="${option#-}"
+  option="${option#-}"
+  system__print_line "$(_command__name): illegal option -- ${option}"
+  system__print_new_line
+  _command__print_usage
+  exit 1
+}
+
+function command__illegal_command_parsed() {
+  system__print_line "$(_command__name): illegal command -- $1"
+  system__print_new_line
+  _command__print_usage
+  exit 1
+}
+
+function _command__print_usage() {
+  system__print_line "$(_bst_${BST__CURRENT_COMMAND}_command__usage)"
+}
+
+function _command__name() {
+  [[ "${BST__CURRENT_COMMAND}" == "default" ]] \
+    && system__print "bst" \
+    || system__print "bst ${BST__CURRENT_COMMAND}"
+}
+
+
+function bst_pet__name_from_line() {
+  _bst_pet__first_token "$1"
+}
+
+function bst_pet__directory_from_line() {
+  local without_name="$(_bst_pet__without_first_token "$1")"
+  _bst_pet__first_token "${without_name}"
+}
+
+function bst_pet__tags_from_line() {
+  local without_name="$(_bst_pet__without_first_token "$1")"
+  local only_tags="$(_bst_pet__without_first_token "${without_name}")"
+  while [[ -n "${only_tags}" ]]; do
+    _bst_pet__first_token "${only_tags}"
+    system__print_new_line
+    only_tags="$(_bst_pet__without_first_token "${only_tags}")"
+  done
+}
+
+function _bst_pet__first_token() {
+  system__print "${1%%:*}"
+}
+
+function _bst_pet__without_first_token() {
+  [[ "$1" == *:* ]] && system__print "${1#*:}"
+}
+
+
 function bst_config_command__run() {
-  bst_config__ensure_config_file_exists
-  #"${EDITOR}" "$(bst_config__config_file)"
+  BST__CURRENT_COMMAND="config"
+  "${EDITOR}" "$(bst_config__config_file)"
 }
 
 
 function bst_free_command__run() {
-  echo "free with $@"
+  system__print_line "free with $@"
 }
 
 
 function bst_list_command__run() {
-  echo "list with $@"
+  BST__CURRENT_COMMAND="list"
+  (( $# == 0 )) && _bst_list_command__list_pets
+  _bst_list_command__parse_arguments "$@"
+}
+
+function _bst_list_command__parse_arguments() {
+  local argument
+  for argument in "$@"; do
+    case "${argument}" in
+      -h|--help)
+      command__help_triggered
+      ;;
+      -*|--*)
+      command__illegal_option_parsed "${argument}"
+      ;;
+      *)
+      command__illegal_command_parsed "${argument}"
+      ;;
+    esac
+  done
+}
+
+function _bst_list_command__usage() {
+  system__print "\
+Usage: bst list
+
+Print the project list."
+}
+
+function _bst_list_command__list_pets() {
+  local line
+  while read line; do
+    local name="$(bst_pet__name_from_line "${line}")"
+    local dir="$(bst_pet__directory_from_line "${line}")"
+    local tags="$(_bst_list_comand__tags_from_line "${line}")"
+    system__print_line "${name} at ${dir}${tags}"
+  done < "$(bst_config__config_file)"
+}
+
+function _bst_list_comand__tags_from_line() {
+  local tags="$(bst_pet__tags_from_line "$1")"
+  for tag in ${tags[@]}; do
+    system__print " #${tag}"
+  done
 }
 
 
 function bst_order_command__run() {
-  echo "order with $@"
+  system__print_line "order with $@"
 }
 
 
 function bst_tame_command__run() {
-  echo "tame with $@"
+  system__print_line "tame with $@"
 }
 
 
 function bst_program__run() {
   bst_config__load
+  BST__CURRENT_COMMAND="default"
   (( $# == 0 )) && _bst_program__print_usage_and_exit_normally
   _bst_program__parse_arguments "$@"
 }
@@ -69,10 +189,10 @@ function _bst_program__parse_arguments() {
   for argument in "$@"; do
     case "${argument}" in
       -h|--help)
-      _bst_program__print_usage_and_exit_normally
+      command__help_triggered
       ;;
       -*|--*)
-      _bst_program__print_illegal_option_and_fail "${argument}"
+      command__illegal_option_parsed "${argument}"
       ;;
       *)
       shift 1
@@ -85,35 +205,13 @@ function _bst_program__run_command() {
   local command="$1"
   shift 1
   local command_function="bst_${command}_command__run"
-  type "${command_function}" > /dev/null 2>&1 || _bst_program__print_illegal_command_and_fail "${command}"
+  type "${command_function}" > /dev/null 2>&1 || command__illegal_command_parsed "${command}"
   ${command_function} "$@"
   exit 0
 }
 
-function _bst_program__print_illegal_command_and_fail() {
-  echo "bst: illegal command -- $1"
-  echo ""
-  _bst_program__print_usage
-  exit 1
-}
-
-function _bst_program__print_usage_and_exit_normally() {
-  _bst_program__print_usage
-  exit 0
-}
-
-function _bst_program__print_illegal_option_and_fail() {
-  local option="${1%=*}"
-  option="${option#-}"
-  option="${option#-}"
-  echo "bst: illegal option -- ${option}"
-  echo ""
-  _bst_program__print_usage
-  exit 1
-}
-
-function _bst_program__print_usage() {
-  echo "\
+function _bst_default_command__usage() {
+  system__print "\
 Usage: bst <command> [arg...]
 
 A Bash tool which can run any command in your favorite projects.

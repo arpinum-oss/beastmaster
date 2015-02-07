@@ -3,6 +3,30 @@ function setup() {
   database__put "command_arg" ""
 }
 
+function should_print_usage_for_help() {
+  local message
+  message="$(bst_program__run "--help")"
+
+  assertion__status_code_is_success $?
+  assertion__string_contains "${message}" "Usage: bst <command>"
+}
+
+function should_fail_if_option_is_illegal() {
+  local message
+  message="$(bst_program__run "--bleh")"
+
+  assertion__status_code_is_failure $?
+  assertion__string_contains "${message}" "bst: illegal option -- bleh"
+}
+
+function should_fail_if_command_is_illegal() {
+  local message
+  message="$(bst_program__run "bleh")"
+
+  assertion__status_code_is_failure $?
+  assertion__string_contains "${message}" "bst: illegal command -- bleh"
+}
+
 function should_call_config_command() {
   mock__make_function_call "bst_config_command__run" "_capture_call"
 

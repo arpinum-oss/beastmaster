@@ -1,4 +1,4 @@
 function bst_config_command__run() {
-  bst_config__ensure_config_file_exists
+  BST__CURRENT_COMMAND="config"
   "${EDITOR}" "$(bst_config__config_file)"
 }

@@ -1,3 +1,3 @@
 function bst_tame_command__run() {
-  echo "tame with $@"
+  system__print_line "tame with $@"
 }

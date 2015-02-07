@@ -11,11 +11,11 @@ Example:
 
 ## Development progress
 
-Overall progress: 5%, stay tuned :)
+Overall progress: **15%**, stay tuned :)
 
 * bst config: done \o/
 * bst free: todo
-* bst list: todo
+* bst list: done \o/
 * bst order: todo
 * bst tame: todo
 
@@ -64,8 +64,8 @@ Do not forget the "..." to prevent some tricky string interpolation.
 If you don't remember all the minions you have, just use the `list` command to display all the pets.
 
     > bst list
-    cool-project at /home/alone/dev/cool-project (java git hobby)
-    bowling-kata at /home/alone/dev/kata/bowling-kata (python training)
+    cool-project at /home/alone/dev/cool-project #java #git #hobby
+    bowling-kata at /home/alone/dev/kata/bowling-kata #python #training
 
 ## Free a project when you are done with it
 
