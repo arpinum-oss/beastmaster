@@ -5,7 +5,7 @@ function should_create_config_file_if_it_does_not_exist() {
 
   [[ -f "${BST__CONFIG_DIR}/config" ]]
   assertion__status_code_is_success $?
-  assertion__equal "# project_name:/project/dir:tag1:tag2" "$(cat "${BST__CONFIG_DIR}/config")"
+  assertion__string_contains "$(cat "${BST__CONFIG_DIR}/config")" "Beastmaster config file"
 }
 
 function wont_create_config_file_if_it_already_exists() {
