@@ -33,8 +33,12 @@ function bst_config__ensure_config_file_exists() {
 function bst_config__project_lines() {
   local line
   while read line; do
-    [[ "${line}" != \#* ]] && system__print_line "${line}"
+    bst_config__project_line_is_commented "${line}" || system__print_line "${line}"
   done < "$(bst_config__config_file)"
+}
+
+function bst_config__project_line_is_commented() {
+  [[ "$1" == \#* ]]
 }
 
 function bst_config__config_file() {
@@ -76,8 +80,14 @@ function system__print_array() {
 
 
 function command__run() {
-  (( $# == 0 )) && $(_namespace)run_default
   _command__parse_arguments "$@"
+  _command__check_args_count $#
+  $(_namespace)run_default "$@"
+}
+
+function _command__check_args_count() {
+  local expected=$($(_namespace)arguments_count)
+  (( $1 > ${expected} )) && _command__wrong_args_count $1 $expected
 }
 
 function _command__parse_arguments() {
@@ -91,9 +101,12 @@ function _command__parse_arguments() {
       _command__illegal_option_parsed "${argument}"
       ;;
       *)
-      _command__check_command "${argument}"
-      shift 1
-      $(_namespace)run_command "${argument}" "$@"
+      if $(_namespace)with_sub_commands; then
+        _command__check_command "${argument}"
+        shift 1
+        $(_namespace)run_command "${argument}" "$@"
+        exit 0
+      fi
     esac
   done
 }
@@ -114,6 +127,13 @@ function _command__illegal_option_parsed() {
   option="${option#-}"
   option="${option#-}"
   system__print_line "$(_command__name): illegal option -- ${option}"
+  system__print_new_line
+  _command__print_usage
+  exit 1
+}
+
+function _command__wrong_args_count() {
+  system__print_line "$(_command__name): wrong args count -- $1 instead of $2"
   system__print_new_line
   _command__print_usage
   exit 1
@@ -174,8 +194,12 @@ function bst_config_command__run() {
   command__run "$@"
 }
 
-function _bst_config_command__accepted_commands() {
-  :
+function _bst_config_command__with_sub_commands() {
+  return 1
+}
+
+function _bst_config_command__arguments_count() {
+  system__print "0"
 }
 
 function _bst_config_command__run_default() {
@@ -200,7 +224,53 @@ Edit the configuration."
 
 
 function bst_free_command__run() {
-  system__print_line "free with $@"
+  BST__CURRENT_COMMAND="free"
+  command__run "$@"
+}
+
+function _bst_free_command__with_sub_commands() {
+  return 1
+}
+
+function _bst_free_command__arguments_count() {
+  system__print "1"
+}
+
+function _bst_free_command__run_default() {
+  local name="$1"
+  local new_config="$(_bst_free_command__create_temp_file)"
+  local line
+  while read line; do
+    _bst_free_command__line_must_be_kept "${line}" "${name}" && echo "${line}" >> "${new_config}"
+  done < "$(bst_config__config_file)"
+  _bst_free_command__copy_temp_file_in_config_file "${new_config}"
+}
+
+function _bst_free_command__line_must_be_kept() {
+  local line="$1"
+  local name="$2"
+  bst_config__project_line_is_commented "${line}" && return 0
+  local current_name="$(bst_project__name_from_line "${line}")"
+  [[ "${current_name}" != "${name}" ]]
+}
+
+function _bst_free_command__create_temp_file() {
+  local file="${BST__CONFIG_DIR}/config_${RANDOM}"
+  touch "${file}"
+  system__print "${file}"
+}
+
+function _bst_free_command__copy_temp_file_in_config_file() {
+  local new_config="$1"
+  cat "${new_config}" > "$(bst_config__config_file)"
+  rm "${new_config}"
+}
+
+function _bst_free_command__usage() {
+  system__print "\
+Usage: bst free <project-name>
+
+Remove a project from your project list."
 }
 
 
@@ -209,22 +279,15 @@ function bst_list_command__run() {
   command__run "$@"
 }
 
-function _bst_list_command__accepted_commands() {
-  :
+function _bst_list_command__with_sub_commands() {
+  return 1
+}
+
+function _bst_list_command__arguments_count() {
+  system__print "0"
 }
 
 function _bst_list_command__run_default() {
-  _bst_list_command__list_projects
-}
-
-function _bst_list_command__usage() {
-  system__print "\
-Usage: bst list
-
-Print your project list."
-}
-
-function _bst_list_command__list_projects() {
   local line
   for line in $(bst_config__project_lines); do
     local name="$(bst_project__name_from_line "${line}")"
@@ -239,6 +302,13 @@ function _bst_list_comand__tags_from_line() {
   for tag in ${tags[@]}; do
     system__print " #${tag}"
   done
+}
+
+function _bst_list_command__usage() {
+  system__print "\
+Usage: bst list
+
+Print your project list."
 }
 
 
@@ -258,6 +328,10 @@ function bst_program__run() {
   command__run "$@"
 }
 
+function _bst_default_command__with_sub_commands() {
+  return 0
+}
+
 function _bst_default_command__accepted_commands() {
   system__print_array "config" "free" "list" "order" "tame"
 }
@@ -271,7 +345,6 @@ function _bst_default_command__run_command() {
   shift 1
   local command_function="bst_${command}_command__run"
   ${command_function} "$@"
-  exit 0
 }
 
 function _bst_default_command__usage() {

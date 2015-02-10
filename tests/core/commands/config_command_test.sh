@@ -6,17 +6,17 @@ function should_print_usage_for_help() {
   assertion__string_contains "${message}" "Usage: bst config"
 }
 
-function should_fail_for_any_additionnal_command() {
+function should_fail_for_any_additionnal_argument() {
   local message
   message="$(bst_config_command__run "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst config: illegal command -- bleh"
+  assertion__string_contains "${message}" "bst config: wrong args count -- 1 instead of 0"
 }
 
 function should_open_config_file_in_editor() {
   EDITOR=_mock_editor
-  BST__CONFIG_DIR="${TMP_DIR}/config${RANDOM}"
+  create_config_dir_for_tests
 
   local result="$(bst_config_command__run)"
 
@@ -29,7 +29,7 @@ function _mock_editor() {
 
 function should_fail_if_editor_is_not_set() {
   EDITOR=""
-  BST__CONFIG_DIR="${TMP_DIR}/config${RANDOM}"
+  create_config_dir_for_tests
   local message
 
   message="$(bst_config_command__run)"

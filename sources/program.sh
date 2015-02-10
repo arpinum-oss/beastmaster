@@ -4,6 +4,10 @@ function bst_program__run() {
   command__run "$@"
 }
 
+function _bst_default_command__with_sub_commands() {
+  return 0
+}
+
 function _bst_default_command__accepted_commands() {
   system__print_array "config" "free" "list" "order" "tame"
 }
@@ -17,7 +21,6 @@ function _bst_default_command__run_command() {
   shift 1
   local command_function="bst_${command}_command__run"
   ${command_function} "$@"
-  exit 0
 }
 
 function _bst_default_command__usage() {

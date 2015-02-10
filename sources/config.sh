@@ -13,8 +13,12 @@ function bst_config__ensure_config_file_exists() {
 function bst_config__project_lines() {
   local line
   while read line; do
-    [[ "${line}" != \#* ]] && system__print_line "${line}"
+    bst_config__project_line_is_commented "${line}" || system__print_line "${line}"
   done < "$(bst_config__config_file)"
+}
+
+function bst_config__project_line_is_commented() {
+  [[ "$1" == \#* ]]
 }
 
 function bst_config__config_file() {

@@ -20,6 +20,7 @@ function _remove_tmp_dir() {
 
 function _source_required_modules() {
 	source "${SOURCES_DIR}/release.sh"
+	source "${TESTS_DIR}/test_helper.sh"
 }
 
 function _configure_global_variables() {

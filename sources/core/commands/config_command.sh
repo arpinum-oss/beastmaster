@@ -3,8 +3,12 @@ function bst_config_command__run() {
   command__run "$@"
 }
 
-function _bst_config_command__accepted_commands() {
-  :
+function _bst_config_command__with_sub_commands() {
+  return 1
+}
+
+function _bst_config_command__arguments_count() {
+  system__print "0"
 }
 
 function _bst_config_command__run_default() {
