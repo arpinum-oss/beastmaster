@@ -20,10 +20,10 @@
 
 function bst_config__load() {
   BST__CONFIG_DIR="${HOME}/.bst"
-  bst_config__ensure_config_file_exists
+  _bst_config__ensure_config_file_exists
 }
 
-function bst_config__ensure_config_file_exists() {
+function _bst_config__ensure_config_file_exists() {
   if [[ ! -f "$(bst_config__config_file)" ]]; then
     mkdir -p "${BST__CONFIG_DIR}"
     system__print_line "$(_bst_config__config_file_header)" > "$(bst_config__config_file)"
@@ -91,15 +91,24 @@ function system__print_array() {
 }
 
 
-function command__run() {
+function command__parse_args() {
   _command__parse_arguments "$@"
-  _command__check_args_count $#
-  $(_namespace)run_default "$@"
+  $(_namespace)run "$@"
 }
 
-function _command__check_args_count() {
-  local expected=$($(_namespace)arguments_count)
-  (( $1 > ${expected} )) && _command__wrong_args_count $1 $expected
+function command__define_current_command() {
+  bst_current_command="$1"
+  bst_delegate_to_sub_commands="no"
+}
+
+function command__delegate_to_sub_commands() {
+  bst_delegate_to_sub_commands="yes"
+}
+
+function command__check_args_count() {
+  local expected=$1
+  local actual=$2
+  (( ${actual} > ${expected} )) && _command__wrong_args_count ${actual} ${expected}
 }
 
 function _command__parse_arguments() {
@@ -113,20 +122,10 @@ function _command__parse_arguments() {
       _command__illegal_option_parsed "${argument}"
       ;;
       *)
-      if $(_namespace)with_sub_commands; then
-        _command__check_command "${argument}"
-        shift 1
-        $(_namespace)run_command "${argument}" "$@"
-        exit 0
-      fi
+      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return
+      ;;
     esac
   done
-}
-
-function _command__check_command() {
-  local accepted_commands=($($(_namespace)accepted_commands))
-  system__array_contains "$1" "${accepted_commands[@]}"
-  (( $? != 0 )) && _command__illegal_command_parsed "$1"
 }
 
 function command__help_triggered() {
@@ -145,13 +144,13 @@ function _command__illegal_option_parsed() {
 }
 
 function _command__wrong_args_count() {
-  system__print_line "$(_command__name): wrong args count -- $1 instead of $2"
+  system__print_line "$(_command__name): wrong args count -- $1 instead of $2 at most"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
-function _command__illegal_command_parsed() {
+function command__illegal_command_parsed() {
   system__print_line "$(_command__name): illegal command -- $1"
   system__print_new_line
   _command__print_usage
@@ -163,13 +162,13 @@ function _command__print_usage() {
 }
 
 function _command__name() {
-  [[ "${BST__CURRENT_COMMAND}" == "default" ]] \
+  [[ "${bst_current_command}" == "default" ]] \
     && system__print "bst" \
-    || system__print "bst ${BST__CURRENT_COMMAND}"
+    || system__print "bst ${bst_current_command}"
 }
 
 function _namespace() {
-  system__print "_bst_${BST__CURRENT_COMMAND}_command__"
+  system__print "_bst_${bst_current_command}_command__"
 }
 
 
@@ -201,20 +200,13 @@ function _bst_project__without_first_token() {
 }
 
 
-function bst_config_command__run() {
-  BST__CURRENT_COMMAND="config"
-  command__run "$@"
+function bst_config_command__parse_args() {
+  command__define_current_command "config"
+  command__parse_args "$@"
 }
 
-function _bst_config_command__with_sub_commands() {
-  return 1
-}
-
-function _bst_config_command__arguments_count() {
-  system__print "0"
-}
-
-function _bst_config_command__run_default() {
+function _bst_config_command__run() {
+  command__check_args_count 0 $#
   _bst_config_command__check_editor
   "${EDITOR}" "$(bst_config__config_file)"
 }
@@ -235,25 +227,18 @@ Edit the configuration."
 }
 
 
-function bst_free_command__run() {
-  BST__CURRENT_COMMAND="free"
-  command__run "$@"
+function bst_free_command__parse_args() {
+  command__define_current_command "free"
+  command__parse_args "$@"
 }
 
-function _bst_free_command__with_sub_commands() {
-  return 1
-}
-
-function _bst_free_command__arguments_count() {
-  system__print "1"
-}
-
-function _bst_free_command__run_default() {
+function _bst_free_command__run() {
+  command__check_args_count 1 $#
   local name="$1"
   local new_config="$(_bst_free_command__create_temp_file)"
   local line
   while read line; do
-    _bst_free_command__line_must_be_kept "${line}" "${name}" && echo "${line}" >> "${new_config}"
+    _bst_free_command__line_must_be_kept "${line}" "${name}" && system__print_line "${line}" >> "${new_config}"
   done < "$(bst_config__config_file)"
   _bst_free_command__copy_temp_file_in_config_file "${new_config}"
 }
@@ -286,30 +271,23 @@ Remove a project from your project list."
 }
 
 
-function bst_list_command__run() {
-  BST__CURRENT_COMMAND="list"
-  command__run "$@"
+function bst_list_command__parse_args() {
+  command__define_current_command "list"
+  command__parse_args "$@"
 }
 
-function _bst_list_command__with_sub_commands() {
-  return 1
-}
-
-function _bst_list_command__arguments_count() {
-  system__print "0"
-}
-
-function _bst_list_command__run_default() {
+function _bst_list_command__run() {
+  command__check_args_count 0 $#
   local line
   for line in $(bst_config__project_lines); do
     local name="$(bst_project__name_from_line "${line}")"
     local dir="$(bst_project__directory_from_line "${line}")"
-    local tags="$(_bst_list_comand__tags_from_line "${line}")"
+    local tags="$(_bst_list_command__tags_from_line "${line}")"
     system__print_line "${name} at ${dir}${tags}"
   done
 }
 
-function _bst_list_comand__tags_from_line() {
+function _bst_list_command__tags_from_line() {
   local tags="$(bst_project__tags_from_line "$1")"
   for tag in ${tags[@]}; do
     system__print " #${tag}"
@@ -324,39 +302,86 @@ Print your project list."
 }
 
 
-function bst_order_command__run() {
+function bst_order_command__parse_args() {
   system__print_line "order with $@"
 }
 
 
-function bst_tame_command__run() {
-  system__print_line "tame with $@"
+function bst_tame_command__parse_args() {
+  command__define_current_command "tame"
+  command__parse_args "$@"
+}
+
+function _bst_tame_command__run() {
+  local directory="$(pwd)"
+  if (( $# == 0 )); then
+    _bst_tame_command__add_project "${directory##*\/}" "${directory}"
+  else
+    command__check_args_count 1 $#
+    _bst_tame_command__add_project "$1" "${directory}"
+  fi
+}
+
+function _bst_tame_command__add_project() {
+  local name="$1"
+  local directory="$2"
+  _bst_tame_command__check_project_collisions "${name}" "${directory}"
+  local line="${name}:${directory}"
+  system__print_line "${line}" >> "$(bst_config__config_file)"
+}
+
+function _bst_tame_command__check_project_collisions() {
+  local name="$1"
+  local directory="$2"
+  local line
+  for line in $(bst_config__project_lines); do
+    local current_name="$(bst_project__name_from_line "${line}")"
+    local current_dir="$(bst_project__directory_from_line "${line}")"
+    [[ "${name}" == "${current_name}" ]] && _bst_tame_command__name_collision "${name}"
+    [[ "${directory}" == "${current_dir}" ]] && _bst_tame_command__directory_collision "${directory}"
+  done
+}
+
+function _bst_tame_command__name_collision() {
+  system__print_line "The project cannot be tamed: name $1 already exists."
+  exit 1
+}
+
+function _bst_tame_command__directory_collision() {
+  system__print_line "The project cannot be tamed: directory $1 already exists."
+  exit 1
+}
+
+function _bst_tame_command__usage() {
+  system__print "\
+Usage: bst tame [<project-name>] [options]
+
+Options:
+  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project
+  -h, --help                      Print usage
+
+Add a project to your project list."
 }
 
 
 function bst_program__run() {
   bst_config__load
-  BST__CURRENT_COMMAND="default"
-  command__run "$@"
+  command__define_current_command "default"
+  command__delegate_to_sub_commands
+  command__parse_args "$@"
 }
 
-function _bst_default_command__with_sub_commands() {
-  return 0
-}
-
-function _bst_default_command__accepted_commands() {
-  system__print_array "config" "free" "list" "order" "tame"
-}
-
-function _bst_default_command__run_default() {
-  command__help_triggered
+function _bst_default_command__run() {
+  (( $# == 0 )) && command__help_triggered
+  _bst_default_command__run_command "$@"
 }
 
 function _bst_default_command__run_command() {
   local command="$1"
+  local accepted=("config" "free" "list" "order" "tame")
+  system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
   shift 1
-  local command_function="bst_${command}_command__run"
-  ${command_function} "$@"
+  bst_${command}_command__parse_args "$@"
 }
 
 function _bst_default_command__usage() {

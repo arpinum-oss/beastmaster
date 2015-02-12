@@ -1,12 +1,21 @@
-function command__run() {
+function command__parse_args() {
   _command__parse_arguments "$@"
-  _command__check_args_count $#
-  $(_namespace)run_default "$@"
+  $(_namespace)run "$@"
 }
 
-function _command__check_args_count() {
-  local expected=$($(_namespace)arguments_count)
-  (( $1 > ${expected} )) && _command__wrong_args_count $1 $expected
+function command__define_current_command() {
+  bst_current_command="$1"
+  bst_delegate_to_sub_commands="no"
+}
+
+function command__delegate_to_sub_commands() {
+  bst_delegate_to_sub_commands="yes"
+}
+
+function command__check_args_count() {
+  local expected=$1
+  local actual=$2
+  (( ${actual} > ${expected} )) && _command__wrong_args_count ${actual} ${expected}
 }
 
 function _command__parse_arguments() {
@@ -20,20 +29,10 @@ function _command__parse_arguments() {
       _command__illegal_option_parsed "${argument}"
       ;;
       *)
-      if $(_namespace)with_sub_commands; then
-        _command__check_command "${argument}"
-        shift 1
-        $(_namespace)run_command "${argument}" "$@"
-        exit 0
-      fi
+      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return
+      ;;
     esac
   done
-}
-
-function _command__check_command() {
-  local accepted_commands=($($(_namespace)accepted_commands))
-  system__array_contains "$1" "${accepted_commands[@]}"
-  (( $? != 0 )) && _command__illegal_command_parsed "$1"
 }
 
 function command__help_triggered() {
@@ -52,13 +51,13 @@ function _command__illegal_option_parsed() {
 }
 
 function _command__wrong_args_count() {
-  system__print_line "$(_command__name): wrong args count -- $1 instead of $2"
+  system__print_line "$(_command__name): wrong args count -- $1 instead of $2 at most"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
-function _command__illegal_command_parsed() {
+function command__illegal_command_parsed() {
   system__print_line "$(_command__name): illegal command -- $1"
   system__print_new_line
   _command__print_usage
@@ -70,11 +69,11 @@ function _command__print_usage() {
 }
 
 function _command__name() {
-  [[ "${BST__CURRENT_COMMAND}" == "default" ]] \
+  [[ "${bst_current_command}" == "default" ]] \
     && system__print "bst" \
-    || system__print "bst ${BST__CURRENT_COMMAND}"
+    || system__print "bst ${bst_current_command}"
 }
 
 function _namespace() {
-  system__print "_bst_${BST__CURRENT_COMMAND}_command__"
+  system__print "_bst_${bst_current_command}_command__"
 }

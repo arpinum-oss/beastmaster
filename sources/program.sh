@@ -1,26 +1,21 @@
 function bst_program__run() {
   bst_config__load
-  BST__CURRENT_COMMAND="default"
-  command__run "$@"
+  command__define_current_command "default"
+  command__delegate_to_sub_commands
+  command__parse_args "$@"
 }
 
-function _bst_default_command__with_sub_commands() {
-  return 0
-}
-
-function _bst_default_command__accepted_commands() {
-  system__print_array "config" "free" "list" "order" "tame"
-}
-
-function _bst_default_command__run_default() {
-  command__help_triggered
+function _bst_default_command__run() {
+  (( $# == 0 )) && command__help_triggered
+  _bst_default_command__run_command "$@"
 }
 
 function _bst_default_command__run_command() {
   local command="$1"
+  local accepted=("config" "free" "list" "order" "tame")
+  system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
   shift 1
-  local command_function="bst_${command}_command__run"
-  ${command_function} "$@"
+  bst_${command}_command__parse_args "$@"
 }
 
 function _bst_default_command__usage() {

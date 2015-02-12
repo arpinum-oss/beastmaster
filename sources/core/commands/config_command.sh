@@ -1,17 +1,10 @@
-function bst_config_command__run() {
-  BST__CURRENT_COMMAND="config"
-  command__run "$@"
+function bst_config_command__parse_args() {
+  command__define_current_command "config"
+  command__parse_args "$@"
 }
 
-function _bst_config_command__with_sub_commands() {
-  return 1
-}
-
-function _bst_config_command__arguments_count() {
-  system__print "0"
-}
-
-function _bst_config_command__run_default() {
+function _bst_config_command__run() {
+  command__check_args_count 0 $#
   _bst_config_command__check_editor
   "${EDITOR}" "$(bst_config__config_file)"
 }

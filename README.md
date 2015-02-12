@@ -31,7 +31,7 @@ Go in your project and type `bst tame`:
 
 You can choose a name if the default name does not suit you (the path basename):
 
-    > bst tame --name=cool_project
+    > bst tame cool_project
 
 Since they all look the same you can tag your projects to recognize them. Use `--tags=name1,name2` option when taming:
 

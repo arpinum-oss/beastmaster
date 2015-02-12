@@ -1,9 +1,9 @@
 function bst_config__load() {
   BST__CONFIG_DIR="${HOME}/.bst"
-  bst_config__ensure_config_file_exists
+  _bst_config__ensure_config_file_exists
 }
 
-function bst_config__ensure_config_file_exists() {
+function _bst_config__ensure_config_file_exists() {
   if [[ ! -f "$(bst_config__config_file)" ]]; then
     mkdir -p "${BST__CONFIG_DIR}"
     system__print_line "$(_bst_config__config_file_header)" > "$(bst_config__config_file)"
