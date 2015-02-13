@@ -1,4 +1,4 @@
-function should_print_usage_for_help() {
+should_print_usage_for_help() {
   local message
   message="$(bst_list_command__parse_args "--help")"
 
@@ -6,7 +6,7 @@ function should_print_usage_for_help() {
   assertion__string_contains "${message}" "Usage: bst list"
 }
 
-function should_fail_for_any_additionnal_argument() {
+should_fail_for_any_additionnal_argument() {
   local message
   message="$(bst_list_command__parse_args "bleh")"
 
@@ -14,7 +14,7 @@ function should_fail_for_any_additionnal_argument() {
   assertion__string_contains "${message}" "bst list: wrong args count -- 1 instead of 0"
 }
 
-function should_print_simple_projects() {
+should_print_simple_projects() {
   create_config_dir_for_tests
   echo "cool-project:/home/alone/dev/cool-project" > "$(bst_config__config_file)"
   echo "bowling-kata:/home/alone/dev/kata/bowling-kata" >> "$(bst_config__config_file)"
@@ -24,12 +24,12 @@ function should_print_simple_projects() {
   assertion__equal "$(_expected_simple_output)" "${result}"
 }
 
-function _expected_simple_output() {
+_expected_simple_output() {
   echo "cool-project at /home/alone/dev/cool-project"
   echo "bowling-kata at /home/alone/dev/kata/bowling-kata"
 }
 
-function should_print_projects_with_tags() {
+should_print_projects_with_tags() {
   create_config_dir_for_tests
   echo "cool-project:/home/alone/dev/cool-project:java:git:hobby" > "$(bst_config__config_file)"
   echo "bowling-kata:/home/alone/dev/kata/bowling-kata:python:training" >> "$(bst_config__config_file)"
@@ -39,7 +39,7 @@ function should_print_projects_with_tags() {
   assertion__equal "$(_expected_output_with_tags)" "${result}"
 }
 
-function _expected_output_with_tags() {
+_expected_output_with_tags() {
   echo "cool-project at /home/alone/dev/cool-project #java #git #hobby"
   echo "bowling-kata at /home/alone/dev/kata/bowling-kata #python #training"
 }

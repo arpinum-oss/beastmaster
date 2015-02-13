@@ -1,4 +1,4 @@
-function should_create_config_file_if_it_does_not_exist() {
+should_create_config_file_if_it_does_not_exist() {
   BST__CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
 
   _bst_config__ensure_config_file_exists
@@ -8,7 +8,7 @@ function should_create_config_file_if_it_does_not_exist() {
   assertion__string_contains "$(cat "${BST__CONFIG_DIR}/config")" "Beastmaster config file"
 }
 
-function wont_create_config_file_if_it_already_exists() {
+wont_create_config_file_if_it_already_exists() {
   BST__CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
   mkdir -p "${BST__CONFIG_DIR}"
   echo "original content" > "${BST__CONFIG_DIR}/config"
@@ -18,7 +18,7 @@ function wont_create_config_file_if_it_already_exists() {
   assertion__equal "original content" "$(cat "${BST__CONFIG_DIR}/config")"
 }
 
-function should_print_all_project_lines() {
+should_print_all_project_lines() {
    BST__CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
   mkdir -p "${BST__CONFIG_DIR}"
   echo "first_project:first_directory" > "${BST__CONFIG_DIR}/config"
@@ -31,7 +31,7 @@ second_project:second_directory"
   assertion__equal "${expected}" "${lines}"
 }
 
-function should_skip_commented_projects_when_printing_project_lines() {
+should_skip_commented_projects_when_printing_project_lines() {
    BST__CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
   mkdir -p "${BST__CONFIG_DIR}"
   echo "# some header" > "${BST__CONFIG_DIR}/config"

@@ -18,19 +18,19 @@
 # Beastmaster all in one source file
 
 
-function bst_config__load() {
+bst_config__load() {
   BST__CONFIG_DIR="${HOME}/.bst"
   _bst_config__ensure_config_file_exists
 }
 
-function _bst_config__ensure_config_file_exists() {
+_bst_config__ensure_config_file_exists() {
   if [[ ! -f "$(bst_config__config_file)" ]]; then
     mkdir -p "${BST__CONFIG_DIR}"
     system__print_line "$(_bst_config__config_file_header)" > "$(bst_config__config_file)"
   fi
 }
 
-function _bst_config__config_file_header() {
+_bst_config__config_file_header() {
   system__print "\
 #
 # Beastmaster config file
@@ -41,37 +41,37 @@ function _bst_config__config_file_header() {
 #"
 }
 
-function bst_config__project_lines() {
+bst_config__project_lines() {
   local line
   while read line; do
     bst_config__project_line_is_commented "${line}" || system__print_line "${line}"
   done < "$(bst_config__config_file)"
 }
 
-function bst_config__project_line_is_commented() {
+bst_config__project_line_is_commented() {
   [[ "$1" == \#* ]]
 }
 
-function bst_config__config_file() {
+bst_config__config_file() {
   system__print "${BST__CONFIG_DIR}/config"
 }
 
 
 
-function system__print_line() {
+system__print_line() {
   system__print "$1"
   system__print_new_line
 }
 
-function system__print() {
+system__print() {
   printf "%s" "$1"
 }
 
-function system__print_new_line() {
+system__print_new_line() {
   printf "\n"
 }
 
-function system__array_contains() {
+system__array_contains() {
   local value=$1
   shift 1
   local i
@@ -83,7 +83,7 @@ function system__array_contains() {
   return 1
 }
 
-function system__print_array() {
+system__print_array() {
   local element
   for element in "$@"; do
     system__print_line "${element}"
@@ -91,27 +91,27 @@ function system__print_array() {
 }
 
 
-function command__parse_args() {
+command__parse_args() {
   _command__parse_arguments "$@"
   $(_namespace)run "$@"
 }
 
-function command__define_current_command() {
+command__define_current_command() {
   bst_current_command="$1"
   bst_delegate_to_sub_commands="no"
 }
 
-function command__delegate_to_sub_commands() {
+command__delegate_to_sub_commands() {
   bst_delegate_to_sub_commands="yes"
 }
 
-function command__check_args_count() {
+command__check_args_count() {
   local expected=$1
   local actual=$2
   (( ${actual} > ${expected} )) && _command__wrong_args_count ${actual} ${expected}
 }
 
-function _command__parse_arguments() {
+_command__parse_arguments() {
   local argument
   for argument in "$@"; do
     case "${argument}" in
@@ -128,12 +128,12 @@ function _command__parse_arguments() {
   done
 }
 
-function command__help_triggered() {
+command__help_triggered() {
   _command__print_usage
   exit 0
 }
 
-function _command__illegal_option_parsed() {
+_command__illegal_option_parsed() {
   local option="${1%=*}"
   option="${option#-}"
   option="${option#-}"
@@ -143,45 +143,45 @@ function _command__illegal_option_parsed() {
   exit 1
 }
 
-function _command__wrong_args_count() {
+_command__wrong_args_count() {
   system__print_line "$(_command__name): wrong args count -- $1 instead of $2 at most"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
-function command__illegal_command_parsed() {
+command__illegal_command_parsed() {
   system__print_line "$(_command__name): illegal command -- $1"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
-function _command__print_usage() {
+_command__print_usage() {
   system__print_line "$($(_namespace)usage)"
 }
 
-function _command__name() {
+_command__name() {
   [[ "${bst_current_command}" == "default" ]] \
     && system__print "bst" \
     || system__print "bst ${bst_current_command}"
 }
 
-function _namespace() {
+_namespace() {
   system__print "_bst_${bst_current_command}_command__"
 }
 
 
-function bst_project__name_from_line() {
+bst_project__name_from_line() {
   _bst_project__first_token "$1"
 }
 
-function bst_project__directory_from_line() {
+bst_project__directory_from_line() {
   local without_name="$(_bst_project__without_first_token "$1")"
   _bst_project__first_token "${without_name}"
 }
 
-function bst_project__tags_from_line() {
+bst_project__tags_from_line() {
   local without_name="$(_bst_project__without_first_token "$1")"
   local only_tags="$(_bst_project__without_first_token "${without_name}")"
   while [[ -n "${only_tags}" ]]; do
@@ -191,27 +191,27 @@ function bst_project__tags_from_line() {
   done
 }
 
-function _bst_project__first_token() {
+_bst_project__first_token() {
   system__print "${1%%:*}"
 }
 
-function _bst_project__without_first_token() {
+_bst_project__without_first_token() {
   [[ "$1" == *:* ]] && system__print "${1#*:}"
 }
 
 
-function bst_config_command__parse_args() {
+bst_config_command__parse_args() {
   command__define_current_command "config"
   command__parse_args "$@"
 }
 
-function _bst_config_command__run() {
+_bst_config_command__run() {
   command__check_args_count 0 $#
   _bst_config_command__check_editor
   "${EDITOR}" "$(bst_config__config_file)"
 }
 
-function _bst_config_command__check_editor() {
+_bst_config_command__check_editor() {
   if [[ -z "${EDITOR}" ]]; then
     system__print_line "EDITOR environment variable must be set."
     system__print_line "  ex: export EDITOR=/usr/bin/nano (or vi if you like 50 shades of grey)"
@@ -219,7 +219,7 @@ function _bst_config_command__check_editor() {
   fi
 }
 
-function _bst_config_command__usage() {
+_bst_config_command__usage() {
   system__print "\
 Usage: bst config
 
@@ -227,12 +227,12 @@ Edit the configuration."
 }
 
 
-function bst_free_command__parse_args() {
+bst_free_command__parse_args() {
   command__define_current_command "free"
   command__parse_args "$@"
 }
 
-function _bst_free_command__run() {
+_bst_free_command__run() {
   command__check_args_count 1 $#
   local name="$1"
   local new_config="$(_bst_free_command__create_temp_file)"
@@ -243,7 +243,7 @@ function _bst_free_command__run() {
   _bst_free_command__copy_temp_file_in_config_file "${new_config}"
 }
 
-function _bst_free_command__line_must_be_kept() {
+_bst_free_command__line_must_be_kept() {
   local line="$1"
   local name="$2"
   bst_config__project_line_is_commented "${line}" && return 0
@@ -251,19 +251,19 @@ function _bst_free_command__line_must_be_kept() {
   [[ "${current_name}" != "${name}" ]]
 }
 
-function _bst_free_command__create_temp_file() {
+_bst_free_command__create_temp_file() {
   local file="${BST__CONFIG_DIR}/config_${RANDOM}"
   touch "${file}"
   system__print "${file}"
 }
 
-function _bst_free_command__copy_temp_file_in_config_file() {
+_bst_free_command__copy_temp_file_in_config_file() {
   local new_config="$1"
   cat "${new_config}" > "$(bst_config__config_file)"
   rm "${new_config}"
 }
 
-function _bst_free_command__usage() {
+_bst_free_command__usage() {
   system__print "\
 Usage: bst free <project-name>
 
@@ -271,12 +271,12 @@ Remove a project from your project list."
 }
 
 
-function bst_list_command__parse_args() {
+bst_list_command__parse_args() {
   command__define_current_command "list"
   command__parse_args "$@"
 }
 
-function _bst_list_command__run() {
+_bst_list_command__run() {
   command__check_args_count 0 $#
   local line
   for line in $(bst_config__project_lines); do
@@ -287,14 +287,14 @@ function _bst_list_command__run() {
   done
 }
 
-function _bst_list_command__tags_from_line() {
+_bst_list_command__tags_from_line() {
   local tags="$(bst_project__tags_from_line "$1")"
   for tag in ${tags[@]}; do
     system__print " #${tag}"
   done
 }
 
-function _bst_list_command__usage() {
+_bst_list_command__usage() {
   system__print "\
 Usage: bst list
 
@@ -302,17 +302,17 @@ Print your project list."
 }
 
 
-function bst_order_command__parse_args() {
+bst_order_command__parse_args() {
   system__print_line "order with $@"
 }
 
 
-function bst_tame_command__parse_args() {
+bst_tame_command__parse_args() {
   command__define_current_command "tame"
   command__parse_args "$@"
 }
 
-function _bst_tame_command__run() {
+_bst_tame_command__run() {
   local directory="$(pwd)"
   if (( $# == 0 )); then
     _bst_tame_command__add_project "${directory##*\/}" "${directory}"
@@ -322,7 +322,7 @@ function _bst_tame_command__run() {
   fi
 }
 
-function _bst_tame_command__add_project() {
+_bst_tame_command__add_project() {
   local name="$1"
   local directory="$2"
   _bst_tame_command__check_project_collisions "${name}" "${directory}"
@@ -330,7 +330,7 @@ function _bst_tame_command__add_project() {
   system__print_line "${line}" >> "$(bst_config__config_file)"
 }
 
-function _bst_tame_command__check_project_collisions() {
+_bst_tame_command__check_project_collisions() {
   local name="$1"
   local directory="$2"
   local line
@@ -342,17 +342,17 @@ function _bst_tame_command__check_project_collisions() {
   done
 }
 
-function _bst_tame_command__name_collision() {
+_bst_tame_command__name_collision() {
   system__print_line "The project cannot be tamed: name $1 already exists."
   exit 1
 }
 
-function _bst_tame_command__directory_collision() {
+_bst_tame_command__directory_collision() {
   system__print_line "The project cannot be tamed: directory $1 already exists."
   exit 1
 }
 
-function _bst_tame_command__usage() {
+_bst_tame_command__usage() {
   system__print "\
 Usage: bst tame [<project-name>] [options]
 
@@ -364,19 +364,19 @@ Add a project to your project list."
 }
 
 
-function bst_program__run() {
+bst_program__run() {
   bst_config__load
   command__define_current_command "default"
   command__delegate_to_sub_commands
   command__parse_args "$@"
 }
 
-function _bst_default_command__run() {
+_bst_default_command__run() {
   (( $# == 0 )) && command__help_triggered
   _bst_default_command__run_command "$@"
 }
 
-function _bst_default_command__run_command() {
+_bst_default_command__run_command() {
   local command="$1"
   local accepted=("config" "free" "list" "order" "tame")
   system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
@@ -384,7 +384,7 @@ function _bst_default_command__run_command() {
   bst_${command}_command__parse_args "$@"
 }
 
-function _bst_default_command__usage() {
+_bst_default_command__usage() {
   system__print "\
 Usage: bst <command> [arg...]
 

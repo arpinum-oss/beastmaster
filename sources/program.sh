@@ -1,16 +1,16 @@
-function bst_program__run() {
+bst_program__run() {
   bst_config__load
   command__define_current_command "default"
   command__delegate_to_sub_commands
   command__parse_args "$@"
 }
 
-function _bst_default_command__run() {
+_bst_default_command__run() {
   (( $# == 0 )) && command__help_triggered
   _bst_default_command__run_command "$@"
 }
 
-function _bst_default_command__run_command() {
+_bst_default_command__run_command() {
   local command="$1"
   local accepted=("config" "free" "list" "order" "tame")
   system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
@@ -18,7 +18,7 @@ function _bst_default_command__run_command() {
   bst_${command}_command__parse_args "$@"
 }
 
-function _bst_default_command__usage() {
+_bst_default_command__usage() {
   system__print "\
 Usage: bst <command> [arg...]
 

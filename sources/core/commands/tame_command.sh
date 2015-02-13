@@ -1,9 +1,9 @@
-function bst_tame_command__parse_args() {
+bst_tame_command__parse_args() {
   command__define_current_command "tame"
   command__parse_args "$@"
 }
 
-function _bst_tame_command__run() {
+_bst_tame_command__run() {
   local directory="$(pwd)"
   if (( $# == 0 )); then
     _bst_tame_command__add_project "${directory##*\/}" "${directory}"
@@ -13,7 +13,7 @@ function _bst_tame_command__run() {
   fi
 }
 
-function _bst_tame_command__add_project() {
+_bst_tame_command__add_project() {
   local name="$1"
   local directory="$2"
   _bst_tame_command__check_project_collisions "${name}" "${directory}"
@@ -21,7 +21,7 @@ function _bst_tame_command__add_project() {
   system__print_line "${line}" >> "$(bst_config__config_file)"
 }
 
-function _bst_tame_command__check_project_collisions() {
+_bst_tame_command__check_project_collisions() {
   local name="$1"
   local directory="$2"
   local line
@@ -33,17 +33,17 @@ function _bst_tame_command__check_project_collisions() {
   done
 }
 
-function _bst_tame_command__name_collision() {
+_bst_tame_command__name_collision() {
   system__print_line "The project cannot be tamed: name $1 already exists."
   exit 1
 }
 
-function _bst_tame_command__directory_collision() {
+_bst_tame_command__directory_collision() {
   system__print_line "The project cannot be tamed: directory $1 already exists."
   exit 1
 }
 
-function _bst_tame_command__usage() {
+_bst_tame_command__usage() {
   system__print "\
 Usage: bst tame [<project-name>] [options]
 
