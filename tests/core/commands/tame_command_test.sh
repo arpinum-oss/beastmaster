@@ -40,7 +40,6 @@ should_add_project_with_given_tags_to_project_list() {
   create_config_dir_for_tests
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
-  BST_VALUE_SEPARATOR=","
 
   (cd "${directory}"; bst_tame_command__parse_args --tags=java,maven,git)
 

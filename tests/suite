@@ -6,6 +6,7 @@ function _run_tests() {
   _source_required_modules
   bst_release__concatenate_sources_in_release_file
   source "$(bst_release__get_released_artifact_file)"
+  _override_bst_global_variables
   source "${TESTS_DIR}/shebang_unit" "$@" "${TESTS_DIR}"
   _remove_tmp_dir
 }
@@ -28,6 +29,10 @@ function _configure_global_variables() {
   SOURCES_DIR="${root_dir}/sources"
   TESTS_DIR="${root_dir}/tests"
   TMP_DIR="/tmp/${RANDOM}"
+}
+
+function _override_bst_global_variables() {
+  bst_config__load
   BST_CONFIG_DIR="${TMP_DIR}"
 }
 
