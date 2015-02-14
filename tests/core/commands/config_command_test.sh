@@ -20,7 +20,7 @@ should_open_config_file_in_editor() {
 
   local result="$(bst_config_command__parse_args)"
 
-  assertion__equal "editor called with: ${BST__CONFIG_DIR}/config" "${result}"
+  assertion__equal "editor called with: ${BST_CONFIG_DIR}/config" "${result}"
 }
 
 _mock_editor() {

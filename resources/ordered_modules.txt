@@ -1,6 +1,7 @@
 header
 config
 utils/system
+utils/option
 utils/command
 core/project
 core/commands/config_command

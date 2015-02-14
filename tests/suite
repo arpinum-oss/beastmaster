@@ -28,7 +28,7 @@ function _configure_global_variables() {
   SOURCES_DIR="${root_dir}/sources"
   TESTS_DIR="${root_dir}/tests"
   TMP_DIR="/tmp/${RANDOM}"
-  BST__CONFIG_DIR="${TMP_DIR}"
+  BST_CONFIG_DIR="${TMP_DIR}"
 }
 
 _run_tests "$@"

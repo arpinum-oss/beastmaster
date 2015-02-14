@@ -1,11 +1,12 @@
 bst_config__load() {
-  BST__CONFIG_DIR="${HOME}/.bst"
+  BST_VALUE_SEPARATOR=","
+  BST_CONFIG_DIR="${HOME}/.bst"
   _bst_config__ensure_config_file_exists
 }
 
 _bst_config__ensure_config_file_exists() {
   if [[ ! -f "$(bst_config__config_file)" ]]; then
-    mkdir -p "${BST__CONFIG_DIR}"
+    mkdir -p "${BST_CONFIG_DIR}"
     system__print_line "$(_bst_config__config_file_header)" > "$(bst_config__config_file)"
   fi
 }
@@ -33,6 +34,6 @@ bst_config__project_line_is_commented() {
 }
 
 bst_config__config_file() {
-  system__print "${BST__CONFIG_DIR}/config"
+  system__print "${BST_CONFIG_DIR}/config"
 }
 

@@ -23,7 +23,7 @@ _bst_free_command__line_must_be_kept() {
 }
 
 _bst_free_command__create_temp_file() {
-  local file="${BST__CONFIG_DIR}/config_${RANDOM}"
+  local file="${BST_CONFIG_DIR}/config_${RANDOM}"
   touch "${file}"
   system__print "${file}"
 }

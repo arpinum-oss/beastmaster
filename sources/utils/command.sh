@@ -1,15 +1,22 @@
 command__parse_args() {
+  bst_read_options=0
   _command__parse_arguments "$@"
+  shift ${bst_read_options}
   $(_namespace)run "$@"
 }
 
 command__define_current_command() {
   bst_current_command="$1"
   bst_delegate_to_sub_commands="no"
+  bst_valid_options=()
 }
 
 command__delegate_to_sub_commands() {
   bst_delegate_to_sub_commands="yes"
+}
+
+command__with_valid_option() {
+  bst_valid_options+=("$1")
 }
 
 command__check_args_count() {
@@ -26,7 +33,11 @@ _command__parse_arguments() {
       command__help_triggered
       ;;
       -*|--*)
-      _command__illegal_option_parsed "${argument}"
+      local option_name="$(option__name "${argument}")"
+      local option_value="$(option__value "${argument}")"
+      system__array_contains "${option_name}" "${bst_valid_options[@]}" || _command__illegal_option_parsed "${argument}"
+      $(_namespace)option_set "${option_name}" "${option_value}"
+      ((bst_read_options++))
       ;;
       *)
       [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return
@@ -41,9 +52,7 @@ command__help_triggered() {
 }
 
 _command__illegal_option_parsed() {
-  local option="${1%=*}"
-  option="${option#-}"
-  option="${option#-}"
+  local option="$(option__name "$1")"
   system__print_line "$(_command__name): illegal option -- ${option}"
   system__print_new_line
   _command__print_usage

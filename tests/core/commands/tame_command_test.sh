@@ -36,6 +36,18 @@ should_add_project_with_given_name_to_project_list() {
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
 }
 
+should_add_project_with_given_tags_to_project_list() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "my_uber_project")"
+  BST_VALUE_SEPARATOR=","
+
+  (cd "${directory}"; bst_tame_command__parse_args --tags=java,maven,git)
+
+  local expected="my_uber_project:${directory}:java:maven:git"
+  assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
 wont_add_project_if_the_name_is_already_taken() {
   create_config_dir_for_tests
   system__print_line "taken_name:directory" > "$(bst_config__config_file)"

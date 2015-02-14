@@ -11,13 +11,13 @@ Example:
 
 ## Development progress
 
-Overall progress: **30%**, stay tuned :)
+Overall progress: **70%**, stay tuned :)
 
 * bst config: done \o/
 * bst free: done \o/
 * bst list: done \o/
 * bst order: todo
-* bst tame: todo
+* bst tame: done \o/
 
 ## Taming projects
 

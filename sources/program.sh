@@ -20,7 +20,7 @@ _bst_default_command__run_command() {
 
 _bst_default_command__usage() {
   system__print "\
-Usage: bst <command> [arg...]
+Usage: bst command [arg...]
 
 A Bash tool which can run any command in your favorite projects (aka pets).
 
@@ -28,11 +28,11 @@ Options:
   -h, --help  Print usage
 
 Commands:
-  config  Edit the configuration
-  free    Remove a project from your project list
-  list    Print your project list
-  order   Execute a command in the project directory
-  tame    Add a project to your project list
+  config      Edit the configuration
+  free        Remove a project from your project list
+  list        Print your project list
+  order       Execute a command in the project directory
+  tame        Add a project to your project list
 
-Run 'bst <command> --help' for more information on a command."
+Run 'bst command --help' for more information on a command."
 }

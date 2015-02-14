@@ -1,6 +1,12 @@
 bst_tame_command__parse_args() {
+  BST_TAMING_TAGS=()
   command__define_current_command "tame"
+  command__with_valid_option "tags"
   command__parse_args "$@"
+}
+
+_bst_tame_command__option_set() {
+  BST_TAMING_TAGS=(${2//${BST_VALUE_SEPARATOR}/ })
 }
 
 _bst_tame_command__run() {
@@ -18,7 +24,17 @@ _bst_tame_command__add_project() {
   local directory="$2"
   _bst_tame_command__check_project_collisions "${name}" "${directory}"
   local line="${name}:${directory}"
+  line="$(_bst_tame_command__line_with_tags "${line}")"
   system__print_line "${line}" >> "$(bst_config__config_file)"
+}
+
+_bst_tame_command__line_with_tags() {
+  local line="$1"
+  local tag
+  for tag in ${BST_TAMING_TAGS[@]}; do
+    line="${line}:${tag}"
+  done
+  system__print "${line}"
 }
 
 _bst_tame_command__check_project_collisions() {
@@ -45,7 +61,7 @@ _bst_tame_command__directory_collision() {
 
 _bst_tame_command__usage() {
   system__print "\
-Usage: bst tame [<project-name>] [options]
+Usage: bst tame [project_name] [options]
 
 Options:
   -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project
