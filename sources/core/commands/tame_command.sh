@@ -1,12 +1,7 @@
 bst_tame_command__parse_args() {
-  BST_TAMING_TAGS=()
   command__define_current_command "tame"
-  command__with_valid_option "tags"
+  command__with_option "t:tags:bst_taming_tags"
   command__parse_args "$@"
-}
-
-_bst_tame_command__option_set() {
-  BST_TAMING_TAGS=(${2//${BST_VALUE_SEPARATOR}/ })
 }
 
 _bst_tame_command__run() {
@@ -31,7 +26,8 @@ _bst_tame_command__add_project() {
 _bst_tame_command__line_with_tags() {
   local line="$1"
   local tag
-  for tag in ${BST_TAMING_TAGS[@]}; do
+  local tags=(${bst_taming_tags//${BST_VALUE_SEPARATOR}/ })
+  for tag in ${tags[@]}; do
     line="${line}:${tag}"
   done
   system__print "${line}"

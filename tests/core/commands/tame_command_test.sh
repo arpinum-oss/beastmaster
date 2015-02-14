@@ -37,11 +37,20 @@ should_add_project_with_given_name_to_project_list() {
 }
 
 should_add_project_with_given_tags_to_project_list() {
+  _check_taming_with_tags "--tags"
+}
+
+should_add_project_with_given_tags_to_project_list_using_short_option() {
+  _check_taming_with_tags "-t"
+}
+
+_check_taming_with_tags() {
+  local option="$1"
   create_config_dir_for_tests
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
-  (cd "${directory}"; bst_tame_command__parse_args --tags=java,maven,git)
+  (cd "${directory}"; bst_tame_command__parse_args "${option}=java,maven,git")
 
   local expected="my_uber_project:${directory}:java:maven:git"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"

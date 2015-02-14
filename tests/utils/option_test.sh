@@ -21,3 +21,15 @@ should_get_value_from_short_option() {
 should_get_value_from_long_option() {
   assertion__equal "3" "$(option__value "--tada=3")"
 }
+
+should_get_short_option_from_option_string() {
+  assertion__equal "t" "$(option__short_option_from_string "t:tags:variable")"
+}
+
+should_get_long_option_from_option_string() {
+  assertion__equal "tags" "$(option__long_option_from_string "t:tags:variable")"
+}
+
+should_get_value_variable_from_option_string() {
+  assertion__equal "variable" "$(option__variable_from_string "t:tags:variable")"
+}
