@@ -28,10 +28,12 @@ _bst_tame_command__add_project() {
 _bst_tame_command__line_with_tags() {
   local line="$1"
   local tag
-  local tags=(${bst_taming_tags//${BST_VALUE_SEPARATOR}/ })
-  for tag in ${tags[@]}; do
+  local old_ifs="${IFS}"
+  IFS="${BST_VALUE_SEPARATOR}"
+  for tag in ${bst_taming_tags}; do
     line="${line}:${tag}"
   done
+  IFS="${old_ifs}"
   system__print "${line}"
 }
 

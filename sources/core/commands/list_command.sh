@@ -17,10 +17,10 @@ _bst_list_command__print_line() {
 }
 
 _bst_list_command__tags_from_line() {
-  local tags="$(bst_project__tags_from_line "$1")"
-  for tag in ${tags[@]}; do
+  local tag
+  while read tag; do
     system__print " #${tag}"
-  done
+  done < <(bst_project__tags_from_line "$1")
 }
 
 _bst_list_command__usage() {

@@ -205,7 +205,7 @@ _command__handle_option() {
   local option_length="$2"
   local option_name="$(option__name "${option_with_dash}")"
   local option_string
-  for option_string in ${bst_option_strings[@]}; do
+  for option_string in "${bst_option_strings[@]}"; do
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       eval "${option_variable}"="$(option__value "${option_with_dash}")"
@@ -409,10 +409,10 @@ _bst_list_command__print_line() {
 }
 
 _bst_list_command__tags_from_line() {
-  local tags="$(bst_project__tags_from_line "$1")"
-  for tag in ${tags[@]}; do
+  local tag
+  while read tag; do
     system__print " #${tag}"
-  done
+  done < <(bst_project__tags_from_line "$1")
 }
 
 _bst_list_command__usage() {
@@ -458,10 +458,12 @@ _bst_tame_command__add_project() {
 _bst_tame_command__line_with_tags() {
   local line="$1"
   local tag
-  local tags=(${bst_taming_tags//${BST_VALUE_SEPARATOR}/ })
-  for tag in ${tags[@]}; do
+  local old_ifs="${IFS}"
+  IFS="${BST_VALUE_SEPARATOR}"
+  for tag in ${bst_taming_tags}; do
     line="${line}:${tag}"
   done
+  IFS="${old_ifs}"
   system__print "${line}"
 }
 

@@ -63,7 +63,7 @@ _command__handle_option() {
   local option_length="$2"
   local option_name="$(option__name "${option_with_dash}")"
   local option_string
-  for option_string in ${bst_option_strings[@]}; do
+  for option_string in "${bst_option_strings[@]}"; do
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       eval "${option_variable}"="$(option__value "${option_with_dash}")"
