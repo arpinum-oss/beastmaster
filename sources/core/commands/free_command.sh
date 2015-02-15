@@ -4,7 +4,15 @@ bst_free_command__parse_args() {
 }
 
 _bst_free_command__run() {
-  command__check_args_count 1 $#
+  if (( $# == 0 )); then
+    _bst_free_command_free_project "$(system__dir_name "$(pwd)")"
+  else
+    command__check_args_count 1 $#
+    _bst_free_command_free_project "$1"
+  fi
+}
+
+_bst_free_command_free_project() {
   local name="$1"
   _bst_free_command__check_project_exists "${name}"
   local new_config="$(_bst_free_command__create_temp_file)"

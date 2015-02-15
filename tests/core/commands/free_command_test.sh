@@ -24,6 +24,17 @@ should_remove_project_from_config() {
   assertion__equal "" "$(cat "$(bst_config__config_file)")"
 }
 
+should_remove_current_project_from_config_if_no_name_is_given() {
+  create_config_dir_for_tests
+  echo "cool-project:/home/alone/dev/cool-project" > "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "cool-project")"
+
+  (cd "${directory}"; bst_free_command__parse_args)
+
+  assertion__status_code_is_success $?
+  assertion__equal "" "$(cat "$(bst_config__config_file)")"
+}
+
 should_fail_if_project_does_not_exists() {
   create_config_dir_for_tests
   local message

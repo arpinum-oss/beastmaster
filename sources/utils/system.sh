@@ -29,3 +29,7 @@ system__print_array() {
     system__print_line "${element}"
   done
 }
+
+system__dir_name() {
+  system__print "${1##*\/}"
+}

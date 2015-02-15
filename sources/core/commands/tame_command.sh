@@ -7,7 +7,7 @@ bst_tame_command__parse_args() {
 _bst_tame_command__run() {
   local directory="$(pwd)"
   if (( $# == 0 )); then
-    _bst_tame_command__add_project "${directory##*\/}" "${directory}"
+    _bst_tame_command__add_project "$(system__dir_name "${directory}")" "${directory}"
   else
     command__check_args_count 1 $#
     _bst_tame_command__add_project "$1" "${directory}"

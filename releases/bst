@@ -91,6 +91,10 @@ system__print_array() {
   done
 }
 
+system__dir_name() {
+  system__print "${1##*\/}"
+}
+
 
 token__at() {
   local position="$1"
@@ -294,7 +298,15 @@ bst_free_command__parse_args() {
 }
 
 _bst_free_command__run() {
-  command__check_args_count 1 $#
+  if (( $# == 0 )); then
+    _bst_free_command_free_project "$(system__dir_name "$(pwd)")"
+  else
+    command__check_args_count 1 $#
+    _bst_free_command_free_project "$1"
+  fi
+}
+
+_bst_free_command_free_project() {
   local name="$1"
   _bst_free_command__check_project_exists "${name}"
   local new_config="$(_bst_free_command__create_temp_file)"
@@ -393,7 +405,7 @@ bst_tame_command__parse_args() {
 _bst_tame_command__run() {
   local directory="$(pwd)"
   if (( $# == 0 )); then
-    _bst_tame_command__add_project "${directory##*\/}" "${directory}"
+    _bst_tame_command__add_project "$(system__dir_name "${directory}")" "${directory}"
   else
     command__check_args_count 1 $#
     _bst_tame_command__add_project "$1" "${directory}"
