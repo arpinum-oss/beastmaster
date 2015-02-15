@@ -26,13 +26,7 @@ _bst_free_command_free_project() {
 }
 
 _bst_free_command__check_project_exists() {
-  local name="$1"
-  local line
-  for line in $(bst_config__project_lines); do
-    local current_name="$(bst_project__name_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && return 0
-  done
-  _bst_free_command__project_does_not_exist "${name}"
+  bst_projects__exists_with_name "$1" || _bst_free_command__project_does_not_exist "$1"
 }
 
 _bst_free_command__project_does_not_exist() {

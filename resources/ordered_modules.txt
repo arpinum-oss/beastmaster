@@ -5,6 +5,7 @@ utils/token
 utils/option
 utils/command
 core/project
+core/projects
 core/commands/config_command
 core/commands/free_command
 core/commands/list_command

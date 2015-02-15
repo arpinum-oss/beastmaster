@@ -38,13 +38,8 @@ _bst_tame_command__line_with_tags() {
 _bst_tame_command__check_project_collisions() {
   local name="$1"
   local directory="$2"
-  local line
-  for line in $(bst_config__project_lines); do
-    local current_name="$(bst_project__name_from_line "${line}")"
-    local current_dir="$(bst_project__directory_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && _bst_tame_command__name_collision "${name}"
-    [[ "${directory}" == "${current_dir}" ]] && _bst_tame_command__directory_collision "${directory}"
-  done
+  bst_projects__exists_with_name "${name}" && _bst_tame_command__name_collision "${name}"
+  bst_projects__exists_with_directory "${directory}" && _bst_tame_command__directory_collision "${directory}"
 }
 
 _bst_tame_command__name_collision() {

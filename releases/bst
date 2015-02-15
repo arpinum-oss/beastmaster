@@ -271,6 +271,34 @@ bst_project__tags_from_line() {
 }
 
 
+bst_projects__exists_with_name() {
+  local name="$1"
+  local line
+  while read line; do
+    local current_name="$(bst_project__name_from_line "${line}")"
+    [[ "${name}" == "${current_name}" ]] && return 0
+  done < <(bst_config__project_lines)
+  return 1
+}
+
+bst_projects__exists_with_directory() {
+  local directory="$1"
+  local line
+  while read line; do
+    local current_dir="$(bst_project__directory_from_line "${line}")"
+    [[ "${directory}" == "${current_dir}" ]] && return 0
+  done < <(bst_config__project_lines)
+  return 1
+}
+
+bst_projects__for_each_line() {
+  local line
+  while read line; do
+    "$@" "${line}"
+  done < <(bst_config__project_lines)
+}
+
+
 bst_config_command__parse_args() {
   command__define_current_command "config"
   command__parse_args "$@"
@@ -326,13 +354,7 @@ _bst_free_command_free_project() {
 }
 
 _bst_free_command__check_project_exists() {
-  local name="$1"
-  local line
-  for line in $(bst_config__project_lines); do
-    local current_name="$(bst_project__name_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && return 0
-  done
-  _bst_free_command__project_does_not_exist "${name}"
+  bst_projects__exists_with_name "$1" || _bst_free_command__project_does_not_exist "$1"
 }
 
 _bst_free_command__project_does_not_exist() {
@@ -375,13 +397,15 @@ bst_list_command__parse_args() {
 
 _bst_list_command__run() {
   command__check_args_count 0 $#
-  local line
-  for line in $(bst_config__project_lines); do
-    local name="$(bst_project__name_from_line "${line}")"
-    local dir="$(bst_project__directory_from_line "${line}")"
-    local tags="$(_bst_list_command__tags_from_line "${line}")"
-    system__print_line "${name} at ${dir}${tags}"
-  done
+  bst_projects__for_each_line _bst_list_command__print_line
+}
+
+_bst_list_command__print_line() {
+  local line="$1"
+  local name="$(bst_project__name_from_line "${line}")"
+  local dir="$(bst_project__directory_from_line "${line}")"
+  local tags="$(_bst_list_command__tags_from_line "${line}")"
+  system__print_line "${name} at ${dir}${tags}"
 }
 
 _bst_list_command__tags_from_line() {
@@ -444,13 +468,8 @@ _bst_tame_command__line_with_tags() {
 _bst_tame_command__check_project_collisions() {
   local name="$1"
   local directory="$2"
-  local line
-  for line in $(bst_config__project_lines); do
-    local current_name="$(bst_project__name_from_line "${line}")"
-    local current_dir="$(bst_project__directory_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && _bst_tame_command__name_collision "${name}"
-    [[ "${directory}" == "${current_dir}" ]] && _bst_tame_command__directory_collision "${directory}"
-  done
+  bst_projects__exists_with_name "${name}" && _bst_tame_command__name_collision "${name}"
+  bst_projects__exists_with_directory "${directory}" && _bst_tame_command__directory_collision "${directory}"
 }
 
 _bst_tame_command__name_collision() {
