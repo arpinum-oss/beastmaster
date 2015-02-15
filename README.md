@@ -92,7 +92,14 @@ Example:
 
     cool-project:/home/alone/dev/cool-project:java:git:hobby
     bowling-kata:/home/alone/dev/kata/bowling-kata:python:training
-    
+
+## Thanks
+
+I would like to thank those awesome and inspiring projects below. I have learn a lot using them.
+
+* [Commander] / [Commander.js]
+* [Jump]
+
 ## License
 
 Copyright (C) 2015, Arpinum
@@ -106,3 +113,6 @@ You should have received a copy of the GNU General Public License along with **B
 [http://www.gnu.org/licenses/lgpl.html]: http://www.gnu.org/licenses/lgpl.html    
 [Travis build status]: https://travis-ci.org/arpinum/beastmaster.png?branch=master
 [Drone build status]: https://drone.io/github.com/arpinum/beastmaster/status.png
+[Commander]: https://github.com/tj/commander
+[Commander.js]: https://github.com/tj/commander.js
+[Jump]: https://github.com/flavio/jump

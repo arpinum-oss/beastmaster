@@ -15,6 +15,7 @@ _bst_free_command__run() {
 _bst_free_command_free_project() {
   local name="$1"
   _bst_free_command__check_project_exists "${name}"
+  system__ask_for_confirmation "Free ${name} project?" || return 0
   local new_config="$(_bst_free_command__create_temp_file)"
   local line
   while read line; do
@@ -28,13 +29,13 @@ _bst_free_command__check_project_exists() {
   local line
   for line in $(bst_config__project_lines); do
     local current_name="$(bst_project__name_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && return
+    [[ "${name}" == "${current_name}" ]] && return 0
   done
   _bst_free_command__project_does_not_exist "${name}"
 }
 
 _bst_free_command__project_does_not_exist() {
-  system__print_line "No project with name $1."
+  system__print_line "No project named $1."
   exit 1
 }
 

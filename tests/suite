@@ -34,6 +34,7 @@ function _configure_global_variables() {
 function _override_bst_global_variables() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${TMP_DIR}"
+  BST_INTERACTIVE="no"
 }
 
 _run_tests "$@"

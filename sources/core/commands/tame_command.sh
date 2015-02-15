@@ -18,6 +18,7 @@ _bst_tame_command__add_project() {
   local name="$1"
   local directory="$2"
   _bst_tame_command__check_project_collisions "${name}" "${directory}"
+  system__ask_for_confirmation "Tame ${directory} as ${name}?" || return 0
   local line="${name}:${directory}"
   line="$(_bst_tame_command__line_with_tags "${line}")"
   system__print_line "${line}" >> "$(bst_config__config_file)"

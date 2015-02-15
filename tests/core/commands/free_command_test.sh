@@ -42,7 +42,7 @@ should_fail_if_project_does_not_exists() {
   message="$(bst_free_command__parse_args "cool-project")"
 
   assertion__status_code_is_failure $?
-  assertion__equal "${message}" "No project with name cool-project."
+  assertion__equal "${message}" "No project named cool-project."
 }
 
 should_ignore_comments_when_removing_project() {
@@ -54,6 +54,6 @@ should_ignore_comments_when_removing_project() {
   message="$(bst_free_command__parse_args "cool-project")"
 
   assertion__status_code_is_failure $?
-  assertion__equal "${message}" "No project with name cool-project."
+  assertion__equal "${message}" "No project named cool-project."
 }
 

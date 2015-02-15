@@ -33,3 +33,11 @@ system__print_array() {
 system__dir_name() {
   system__print "${1##*\/}"
 }
+
+system__ask_for_confirmation() {
+  [[ "${BST_INTERACTIVE}" == "no" ]] && return 0
+  system__print "$1 (y/n) "
+  local response=""
+  read response < /dev/tty
+  [[ "${response}" == "y" ]]
+}

@@ -2,18 +2,15 @@
 
 # Copyright (C) 2015, Arpinum
 #
-# Beastmaster is free software: you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) any later
+# Beastmaster is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+# License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
 # version.
 #
-# Beastmaster is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
+# Beastmaster is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along with
-# Beastmaster. If not, see http://www.gnu.org/licenses/lgpl.html.
+# You should have received a copy of the GNU General Public License along with Beastmaster. If not, see
+# http://www.gnu.org/licenses/lgpl.html.
 
 # Beastmaster all in one source file
 
@@ -21,6 +18,7 @@
 bst_config__load() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${HOME}/.bst"
+  BST_INTERACTIVE="yes"
   _bst_config__ensure_config_file_exists
 }
 
@@ -93,6 +91,14 @@ system__print_array() {
 
 system__dir_name() {
   system__print "${1##*\/}"
+}
+
+system__ask_for_confirmation() {
+  [[ "${BST_INTERACTIVE}" == "no" ]] && return 0
+  system__print "$1 (y/n) "
+  local response=""
+  read response < /dev/tty
+  [[ "${response}" == "y" ]]
 }
 
 
@@ -175,7 +181,7 @@ _command__parse_arguments() {
       _command__handle_short_option "${argument}"
       ;;
       *)
-      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return
+      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return 0
       ;;
     esac
   done
@@ -203,8 +209,8 @@ _command__handle_option() {
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       eval "${option_variable}"="$(option__value "${option_with_dash}")"
-      ((bst_read_options++))
-      return
+      (( bst_read_options++ ))
+      return 0
     fi
   done
   _command__illegal_option_parsed "${option_name}"
@@ -309,6 +315,7 @@ _bst_free_command__run() {
 _bst_free_command_free_project() {
   local name="$1"
   _bst_free_command__check_project_exists "${name}"
+  system__ask_for_confirmation "Free ${name} project?" || return 0
   local new_config="$(_bst_free_command__create_temp_file)"
   local line
   while read line; do
@@ -322,13 +329,13 @@ _bst_free_command__check_project_exists() {
   local line
   for line in $(bst_config__project_lines); do
     local current_name="$(bst_project__name_from_line "${line}")"
-    [[ "${name}" == "${current_name}" ]] && return
+    [[ "${name}" == "${current_name}" ]] && return 0
   done
   _bst_free_command__project_does_not_exist "${name}"
 }
 
 _bst_free_command__project_does_not_exist() {
-  system__print_line "No project with name $1."
+  system__print_line "No project named $1."
   exit 1
 }
 
@@ -416,6 +423,7 @@ _bst_tame_command__add_project() {
   local name="$1"
   local directory="$2"
   _bst_tame_command__check_project_collisions "${name}" "${directory}"
+  system__ask_for_confirmation "Tame ${directory} as ${name}?" || return 0
   local line="${name}:${directory}"
   line="$(_bst_tame_command__line_with_tags "${line}")"
   system__print_line "${line}" >> "$(bst_config__config_file)"

@@ -39,7 +39,7 @@ _command__parse_arguments() {
       _command__handle_short_option "${argument}"
       ;;
       *)
-      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return
+      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return 0
       ;;
     esac
   done
@@ -67,8 +67,8 @@ _command__handle_option() {
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       eval "${option_variable}"="$(option__value "${option_with_dash}")"
-      ((bst_read_options++))
-      return
+      (( bst_read_options++ ))
+      return 0
     fi
   done
   _command__illegal_option_parsed "${option_name}"

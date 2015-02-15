@@ -1,6 +1,7 @@
 bst_config__load() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${HOME}/.bst"
+  BST_INTERACTIVE="yes"
   _bst_config__ensure_config_file_exists
 }
 
