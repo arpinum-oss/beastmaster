@@ -24,13 +24,25 @@ should_remove_project_from_config() {
   assertion__equal "" "$(cat "$(bst_config__config_file)")"
 }
 
+should_fail_if_project_does_not_exists() {
+  create_config_dir_for_tests
+  local message
+
+  message="$(bst_free_command__parse_args "cool-project")"
+
+  assertion__status_code_is_failure $?
+  assertion__equal "${message}" "No project with name cool-project."
+}
+
 should_ignore_comments_when_removing_project() {
   create_config_dir_for_tests
   local line="# cool-project:/home/alone/dev/cool-project"
   echo "${line}" > "$(bst_config__config_file)"
+  local message
 
-  bst_free_command__parse_args "cool-project"
+  message="$(bst_free_command__parse_args "cool-project")"
 
-  assertion__status_code_is_success $?
-  assertion__equal "${line}" "$(cat "$(bst_config__config_file)")"
+  assertion__status_code_is_failure $?
+  assertion__equal "${message}" "No project with name cool-project."
 }
+

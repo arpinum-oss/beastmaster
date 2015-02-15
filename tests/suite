@@ -32,7 +32,7 @@ function _configure_global_variables() {
 }
 
 function _override_bst_global_variables() {
-  bst_config__load
+  BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${TMP_DIR}"
 }
 

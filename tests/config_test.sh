@@ -19,7 +19,7 @@ wont_create_config_file_if_it_already_exists() {
 }
 
 should_print_all_project_lines() {
-   BST_CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
+  BST_CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
   mkdir -p "${BST_CONFIG_DIR}"
   echo "first_project:first_directory" > "${BST_CONFIG_DIR}/config"
   echo "second_project:second_directory" >> "${BST_CONFIG_DIR}/config"
@@ -32,7 +32,7 @@ second_project:second_directory"
 }
 
 should_skip_commented_projects_when_printing_project_lines() {
-   BST_CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
+  BST_CONFIG_DIR="${TMP_DIR}/.bst${RANDOM}"
   mkdir -p "${BST_CONFIG_DIR}"
   echo "# some header" > "${BST_CONFIG_DIR}/config"
   echo "first_project:first#directory" >> "${BST_CONFIG_DIR}/config"

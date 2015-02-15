@@ -46,12 +46,12 @@ _bst_tame_command__check_project_collisions() {
 }
 
 _bst_tame_command__name_collision() {
-  system__print_line "The project cannot be tamed: name $1 already exists."
+  system__print_line "A project named $1 already exists."
   exit 1
 }
 
 _bst_tame_command__directory_collision() {
-  system__print_line "The project cannot be tamed: directory $1 already exists."
+  system__print_line "A project already exists at directory $1."
   exit 1
 }
 

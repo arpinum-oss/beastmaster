@@ -296,12 +296,28 @@ bst_free_command__parse_args() {
 _bst_free_command__run() {
   command__check_args_count 1 $#
   local name="$1"
+  _bst_free_command__check_project_exists "${name}"
   local new_config="$(_bst_free_command__create_temp_file)"
   local line
   while read line; do
     _bst_free_command__line_must_be_kept "${line}" "${name}" && system__print_line "${line}" >> "${new_config}"
   done < "$(bst_config__config_file)"
   _bst_free_command__copy_temp_file_in_config_file "${new_config}"
+}
+
+_bst_free_command__check_project_exists() {
+  local name="$1"
+  local line
+  for line in $(bst_config__project_lines); do
+    local current_name="$(bst_project__name_from_line "${line}")"
+    [[ "${name}" == "${current_name}" ]] && return
+  done
+  _bst_free_command__project_does_not_exist "${name}"
+}
+
+_bst_free_command__project_does_not_exist() {
+  system__print_line "No project with name $1."
+  exit 1
 }
 
 _bst_free_command__line_must_be_kept() {
@@ -416,12 +432,12 @@ _bst_tame_command__check_project_collisions() {
 }
 
 _bst_tame_command__name_collision() {
-  system__print_line "The project cannot be tamed: name $1 already exists."
+  system__print_line "A project named $1 already exists."
   exit 1
 }
 
 _bst_tame_command__directory_collision() {
-  system__print_line "The project cannot be tamed: directory $1 already exists."
+  system__print_line "A project already exists at directory $1."
   exit 1
 }
 
