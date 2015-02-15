@@ -37,7 +37,7 @@ Since they all look the same you can tag your projects to recognize them. Use `-
 
     > bst tame --tags=cat_related,java
 
-For simplicity sake, tags won't work with space or comma (oh really?) in it.
+For simplicity sake, tags won't work with space, comma, eol (oh really?) in it.
 
 ## Yell orders to do the dirty work
 

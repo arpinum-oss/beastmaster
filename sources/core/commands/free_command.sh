@@ -22,6 +22,7 @@ _bst_free_command_free_project() {
     _bst_free_command__line_must_be_kept "${line}" "${name}" && system__print_line "${line}" >> "${new_config}"
   done < "$(bst_config__config_file)"
   _bst_free_command__copy_temp_file_in_config_file "${new_config}"
+  system__print_line "${name} is running away..."
 }
 
 _bst_free_command__check_project_exists() {

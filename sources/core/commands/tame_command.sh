@@ -22,6 +22,7 @@ _bst_tame_command__add_project() {
   local line="${name}:${directory}"
   line="$(_bst_tame_command__line_with_tags "${line}")"
   system__print_line "${line}" >> "$(bst_config__config_file)"
+  system__print_line "${name} is now tamed!"
 }
 
 _bst_tame_command__line_with_tags() {
