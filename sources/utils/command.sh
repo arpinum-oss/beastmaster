@@ -66,7 +66,7 @@ _command__handle_option() {
   for option_string in "${bst_option_strings[@]}"; do
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
-      eval "${option_variable}"="$(option__value "${option_with_dash}")"
+      printf -v "${option_variable}" "$(option__value "${option_with_dash}")"
       (( bst_read_options++ ))
       return 0
     fi
