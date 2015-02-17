@@ -18,8 +18,16 @@ should_get_value_from_short_option() {
   assertion__equal "3" "$(option__value "-t=3")"
 }
 
+should_get_yes_value_from_short_option_without_value() {
+  assertion__equal "yes" "$(option__value "-t")"
+}
+
 should_get_value_from_long_option() {
   assertion__equal "3" "$(option__value "--tada=3")"
+}
+
+should_get_yes_value_from_long_option_without_value() {
+  assertion__equal "yes" "$(option__value "--tada")"
 }
 
 should_get_short_option_from_option_string() {

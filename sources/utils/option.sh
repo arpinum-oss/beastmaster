@@ -5,7 +5,11 @@ option__name() {
 }
 
 option__value() {
-  system__print "${1#*=}"
+  if [[ "$1" == *=* ]]; then
+    system__print "${1#*=}"
+  else
+    system__print "yes"
+  fi
 }
 
 option__short_option_from_string() {

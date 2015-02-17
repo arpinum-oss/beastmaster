@@ -24,3 +24,12 @@ bst_projects__for_each_line() {
     "$@" "${line}"
   done < <(bst_config__project_lines)
 }
+
+bst_projects__lines_with_name() {
+  local name="$1"
+  local line
+  while read line; do
+    local current_name="$(bst_project__name_from_line "${line}")"
+    [[ "${name}" == "${current_name}" ]] && system__print_line "${line}"
+  done < <(bst_config__project_lines)
+}

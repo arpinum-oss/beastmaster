@@ -7,7 +7,7 @@
 
 Example:
 
-    bst order my_project "git pull origin master"
+    bst order my_project git status
 
 ## Development progress
 
@@ -37,7 +37,7 @@ Since they all look the same you can tag your projects to recognize them. Use `-
 
     > bst tame --tags=cat_related,java
 
-For simplicity sake, tags won't work with space, comma, eol (oh really?) in it.
+For simplicity sake, tags won't work with comma or eol (oh really?) in it.
 
 ## Yell orders to do the dirty work
 
@@ -47,17 +47,19 @@ Each command are run in the project directory.
 
 If you want to refresh a single project:
 
-    > bst order my_project "git pull origin master"
+    > bst order my_project git pull origin master
 
 To check the status of all projects tagged as git:
 
-    > bst order --tags=git "git status"
+    > bst order --tags=git git status
 
 To run the tests of all projects named like "js_project*"
 
-    > bst order "js_project*" "npm test"
+    > bst order "js_project*" npm test
 
 Do not forget the "..." to prevent some tricky string interpolation.
+
+`bst order` options should be placed before name (if any) and command to not mess with command own options.
 
 ## List your projects to review the army
 

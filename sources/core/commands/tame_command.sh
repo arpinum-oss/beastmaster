@@ -56,11 +56,10 @@ _bst_tame_command__directory_collision() {
 
 _bst_tame_command__usage() {
   system__print "\
-Usage: bst tame [project_name] [options]
+Usage: bst tame [options] [project_name]
 
 Options:
-  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project
-  -h, --help                      Print usage
+  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project.
 
 Add a project to your project list."
 }

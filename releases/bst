@@ -124,7 +124,11 @@ option__name() {
 }
 
 option__value() {
-  system__print "${1#*=}"
+  if [[ "$1" == *=* ]]; then
+    system__print "${1#*=}"
+  else
+    system__print "yes"
+  fi
 }
 
 option__short_option_from_string() {
@@ -141,10 +145,10 @@ option__variable_from_string() {
 
 
 command__parse_args() {
-  bst_read_options=0
-  _command__parse_arguments "$@"
-  shift ${bst_read_options}
-  $(_namespace)run "$@"
+  bst_command_args=("$@")
+  _command__parse_options
+  bst_command_args=("${bst_command_args[@]}")
+  $(_namespace)run "${bst_command_args[@]}"
 }
 
 command__define_current_command() {
@@ -167,21 +171,24 @@ command__check_args_count() {
   (( ${actual} > ${expected} )) && _command__wrong_args_count ${actual} ${expected}
 }
 
-_command__parse_arguments() {
-  local argument
-  for argument in "$@"; do
+_command__parse_options() {
+  local index
+  for (( index = 0; index < ${#bst_command_args[@]}; index++ )) do
+    local argument="${bst_command_args[${index}]}"
     case "${argument}" in
       -h|--help)
       command__help_triggered
       ;;
       --*)
+      unset bst_command_args[${index}]
       _command__handle_long_option "${argument}"
       ;;
       -*)
+      unset bst_command_args[${index}]
       _command__handle_short_option "${argument}"
       ;;
       *)
-      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return 0
+      return 0
       ;;
     esac
   done
@@ -209,7 +216,6 @@ _command__handle_option() {
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       printf -v "${option_variable}" "$(option__value "${option_with_dash}")"
-      (( bst_read_options++ ))
       return 0
     fi
   done
@@ -295,6 +301,15 @@ bst_projects__for_each_line() {
   local line
   while read line; do
     "$@" "${line}"
+  done < <(bst_config__project_lines)
+}
+
+bst_projects__lines_with_name() {
+  local name="$1"
+  local line
+  while read line; do
+    local current_name="$(bst_project__name_from_line "${line}")"
+    [[ "${name}" == "${current_name}" ]] && system__print_line "${line}"
   done < <(bst_config__project_lines)
 }
 
@@ -384,7 +399,7 @@ _bst_free_command__copy_temp_file_in_config_file() {
 
 _bst_free_command__usage() {
   system__print "\
-Usage: bst free <project-name>
+Usage: bst free project_name
 
 Remove a project from your project list."
 }
@@ -424,7 +439,45 @@ Print your project list."
 
 
 bst_order_command__parse_args() {
-  system__print_line "order with $@"
+  command__define_current_command "order"
+  command__with_option "v:verbose:bst_verbose_orders"
+  command__parse_args "$@"
+}
+
+_bst_order_command__run() {
+  local given_name="$1"
+  shift
+  local line
+  while read line; do
+    local directory="$(bst_project__directory_from_line "${line}")"
+    local name="$(bst_project__name_from_line "${line}")"
+    _bst_order_command__check_directory
+    _bst_order_command__order_command "$@"
+  done < <(bst_projects__lines_with_name "${given_name}")
+}
+
+_bst_order_command__order_command() {
+  [[ "${bst_verbose_orders}" == "yes" ]] \
+    && system__print_line "Ordering command in ${directory} for ${name}."
+  ( cd "${directory}" && "$@" )
+}
+
+_bst_order_command__check_directory() {
+  if [[ ! -d "${directory}" ]]; then
+    system__print_line "${directory} does not exist for ${name}."
+    exit 1
+  fi
+}
+
+_bst_order_command__usage() {
+  system__print "\
+Usage: bst order [project_name]
+
+Options:
+  -t, --tags=tag1[,tag2][,tagN]   Consider only projects having one of these tags
+  -v, --verbose                   Print more information
+
+Execute a command in the project directory."
 }
 
 
@@ -490,7 +543,6 @@ Usage: bst tame [project_name] [options]
 
 Options:
   -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project
-  -h, --help                      Print usage
 
 Add a project to your project list."
 }

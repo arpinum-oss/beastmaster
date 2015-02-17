@@ -27,3 +27,13 @@ should_execute_something_for_each_line() {
 second_project:second_directory"
   assertion__equal "${expected}" "${lines}"
 }
+
+should_print_project_line_with_corresponding_name() {
+  create_config_dir_for_tests
+  echo "first_project:first_directory" > "${BST_CONFIG_DIR}/config"
+  echo "second_project:second_directory" >> "${BST_CONFIG_DIR}/config"
+
+  local lines="$(bst_projects__lines_with_name "second_project")"
+
+  assertion__equal "second_project:second_directory" "${lines}"
+}

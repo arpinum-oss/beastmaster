@@ -1,8 +1,8 @@
 command__parse_args() {
-  bst_read_options=0
-  _command__parse_arguments "$@"
-  shift ${bst_read_options}
-  $(_namespace)run "$@"
+  bst_command_args=("$@")
+  _command__parse_options
+  bst_command_args=("${bst_command_args[@]}")
+  $(_namespace)run "${bst_command_args[@]}"
 }
 
 command__define_current_command() {
@@ -25,21 +25,24 @@ command__check_args_count() {
   (( ${actual} > ${expected} )) && _command__wrong_args_count ${actual} ${expected}
 }
 
-_command__parse_arguments() {
-  local argument
-  for argument in "$@"; do
+_command__parse_options() {
+  local index
+  for (( index = 0; index < ${#bst_command_args[@]}; index++ )) do
+    local argument="${bst_command_args[${index}]}"
     case "${argument}" in
       -h|--help)
       command__help_triggered
       ;;
       --*)
+      unset bst_command_args[${index}]
       _command__handle_long_option "${argument}"
       ;;
       -*)
+      unset bst_command_args[${index}]
       _command__handle_short_option "${argument}"
       ;;
       *)
-      [[ "${bst_delegate_to_sub_commands}" == "yes" ]] && return 0
+      return 0
       ;;
     esac
   done
@@ -67,7 +70,6 @@ _command__handle_option() {
     if [[ "${option_name}" == "$(option__"${option_length}"_option_from_string "${option_string}")" ]]; then
       local option_variable="$(option__variable_from_string "${option_string}")"
       printf -v "${option_variable}" "$(option__value "${option_with_dash}")"
-      (( bst_read_options++ ))
       return 0
     fi
   done
