@@ -1,6 +1,6 @@
 should_print_usage_for_help() {
   local message
-  message="$(bst_tame_command__parse_args "--help")"
+  message="$(bst_tame_command__parse_args --help)"
 
   assertion__status_code_is_success $?
   assertion__string_contains "${message}" "Usage: bst tame"
@@ -37,11 +37,11 @@ should_add_project_with_given_name_to_project_list() {
 }
 
 should_add_project_with_given_tags_to_project_list() {
-  _check_taming_with_tags "--tags"
+  _check_taming_with_tags --tags
 }
 
 should_add_project_with_given_tags_to_project_list_using_short_option() {
-  _check_taming_with_tags "-t"
+  _check_taming_with_tags -t
 }
 
 _check_taming_with_tags() {
@@ -71,11 +71,11 @@ wont_add_project_if_the_name_is_already_taken() {
 wont_add_project_if_the_directory_is_already_taken() {
   create_config_dir_for_tests
   local directory="$(create_project_dir_for_test "my_uber_project")"
-  system__print_line "name:"${directory}"" > "$(bst_config__config_file)"
+  system__print_line "name:${directory}" > "$(bst_config__config_file)"
   local message
 
   message="$(cd "${directory}"; bst_tame_command__parse_args)"
 
   assertion__status_code_is_failure $?
-  assertion__equal "A project already exists at directory "${directory}"." "${message}"
+  assertion__equal "A project already exists at directory ${directory}." "${message}"
 }

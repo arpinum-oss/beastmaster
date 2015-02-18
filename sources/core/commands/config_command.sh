@@ -19,7 +19,7 @@ _bst_config_command__check_editor() {
 
 _bst_config_command__usage() {
   system__print "\
-Usage: bst config
+Edit the configuration.
 
-Edit the configuration."
+Usage: bst config"
 }

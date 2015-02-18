@@ -1,6 +1,6 @@
 should_print_usage_for_help() {
   local message
-  message="$(bst_free_command__parse_args "--help")"
+  message="$(bst_free_command__parse_args --help)"
 
   assertion__status_code_is_success $?
   assertion__string_contains "${message}" "Usage: bst free"

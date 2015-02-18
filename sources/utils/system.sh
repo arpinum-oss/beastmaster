@@ -41,3 +41,13 @@ system__ask_for_confirmation() {
   read response < /dev/tty
   [[ "${response}" == "y" ]]
 }
+
+system__string_array_values() {
+  local old_ifs="${IFS}"
+  IFS="${BST_VALUE_SEPARATOR}"
+  for value in $1; do
+    system__print_line "${value}"
+  done
+  IFS="${old_ifs}"
+}
+

@@ -56,7 +56,7 @@ _bst_free_command__copy_temp_file_in_config_file() {
 
 _bst_free_command__usage() {
   system__print "\
-Usage: bst free project_name
+Remove a project from your project list.
 
-Remove a project from your project list."
+Usage: bst free project_name"
 }

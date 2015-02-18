@@ -25,7 +25,7 @@ _bst_list_command__tags_from_line() {
 
 _bst_list_command__usage() {
   system__print "\
-Usage: bst list
+Print your project list.
 
-Print your project list."
+Usage: bst list"
 }

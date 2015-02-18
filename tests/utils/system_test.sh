@@ -32,3 +32,15 @@ should_print_array() {
 hello"
   assertion__equal "${expected}" "${string}"
 }
+
+should_print_all_string_array_values() {
+  local string_array="a b,c,d"
+
+  local actual="$(system__string_array_values "${string_array}")"
+
+  local expected="a b
+c
+d"
+  assertion__equal "${expected}" "${actual}"
+}
+

@@ -28,12 +28,9 @@ _bst_tame_command__add_project() {
 _bst_tame_command__line_with_tags() {
   local line="$1"
   local tag
-  local old_ifs="${IFS}"
-  IFS="${BST_VALUE_SEPARATOR}"
-  for tag in ${bst_taming_tags}; do
+  while read tag; do
     line="${line}:${tag}"
-  done
-  IFS="${old_ifs}"
+  done < <(system__string_array_values "${bst_taming_tags}")
   system__print "${line}"
 }
 
@@ -56,10 +53,10 @@ _bst_tame_command__directory_collision() {
 
 _bst_tame_command__usage() {
   system__print "\
+Add a project to your project list.
+
 Usage: bst tame [options] [project_name]
 
 Options:
-  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project.
-
-Add a project to your project list."
+  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project."
 }
