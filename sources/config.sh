@@ -37,4 +37,3 @@ bst_config__project_line_is_commented() {
 bst_config__config_file() {
   system__print "${BST_CONFIG_DIR}/config"
 }
-

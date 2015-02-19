@@ -14,7 +14,6 @@
 
 # Beastmaster all in one source file
 
-
 bst_config__load() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${HOME}/.bst"
@@ -55,8 +54,6 @@ bst_config__config_file() {
   system__print "${BST_CONFIG_DIR}/config"
 }
 
-
-
 system__print_line() {
   system__print "$1"
   system__print_new_line
@@ -68,25 +65,6 @@ system__print() {
 
 system__print_new_line() {
   printf "\n"
-}
-
-system__array_contains() {
-  local value=$1
-  shift 1
-  local i
-  for (( i=1; i <= $#; i++ )); do
-    if [[ "${!i}" == "${value}" ]]; then
-      return 0
-    fi
-  done
-  return 1
-}
-
-system__print_array() {
-  local element
-  for element in "$@"; do
-    system__print_line "${element}"
-  done
 }
 
 system__dir_name() {
@@ -101,7 +79,21 @@ system__ask_for_confirmation() {
   [[ "${response}" == "y" ]]
 }
 
-system__string_array_values() {
+string__token_at() {
+  local position="$1"
+  local string="$2"
+  local i
+  for (( i=1; i < ${position}; i++ )); do
+    string="$(string__without_first_token "${string}")"
+  done
+  system__print "${string%%:*}"
+}
+
+string__without_first_token() {
+  [[ "$1" == *:* ]] && system__print "${1#*:}"
+}
+
+string__split() {
   local old_ifs="${IFS}"
   IFS="${BST_VALUE_SEPARATOR}"
   for value in $1; do
@@ -110,22 +102,22 @@ system__string_array_values() {
   IFS="${old_ifs}"
 }
 
-
-
-token__at() {
-  local position="$1"
-  local string="$2"
+array__contains() {
+  local value="$1"
+  shift 1
   local i
-  for (( i=1; i < ${position}; i++ )); do
-    string="$(token__without_first "${string}")"
+  for (( i=1; i <= $#; i++ )); do
+    [[ "${!i}" == "${value}" ]] && return 0
   done
-  system__print "${string%%:*}"
+  return 1
 }
 
-token__without_first() {
-  [[ "$1" == *:* ]] && system__print "${1#*:}"
+array__print() {
+  local element
+  for element in "$@"; do
+    system__print_line "${element}"
+  done
 }
-
 
 option__name() {
   local option="${1%=*}"
@@ -142,17 +134,16 @@ option__value() {
 }
 
 option__short_option_from_string() {
-  token__at 1 "$1"
+  string__token_at 1 "$1"
 }
 
 option__long_option_from_string() {
-  token__at 2 "$1"
+  string__token_at 2 "$1"
 }
 
 option__variable_from_string() {
-  token__at 3 "$1"
+  string__token_at 3 "$1"
 }
-
 
 command__parse_args() {
   bst_command_args=("$@")
@@ -267,25 +258,23 @@ _namespace() {
   system__print "_bst_${bst_current_command}_command__"
 }
 
-
 bst_project__name_from_line() {
-  token__at 1 "$1"
+  string__token_at 1 "$1"
 }
 
 bst_project__directory_from_line() {
-  token__at 2 "$1"
+  string__token_at 2 "$1"
 }
 
 bst_project__tags_from_line() {
-  local without_name="$(token__without_first "$1")"
-  local only_tags="$(token__without_first "${without_name}")"
+  local without_name="$(string__without_first_token "$1")"
+  local only_tags="$(string__without_first_token "${without_name}")"
   while [[ -n "${only_tags}" ]]; do
-    token__at 1 "${only_tags}"
+    string__token_at 1 "${only_tags}"
     system__print_new_line
-    only_tags="$(token__without_first "${only_tags}")"
+    only_tags="$(string__without_first_token "${only_tags}")"
   done
 }
-
 
 bst_projects__exists_with_name() {
   local name="$1"
@@ -357,7 +346,6 @@ _bst_projects__project_line_has_tag() {
   return 1
 }
 
-
 bst_config_command__parse_args() {
   command__define_current_command "config"
   command__parse_args "$@"
@@ -383,7 +371,6 @@ Edit the configuration.
 
 Usage: bst config"
 }
-
 
 bst_free_command__parse_args() {
   command__define_current_command "free"
@@ -448,7 +435,6 @@ Remove a project from your project list.
 Usage: bst free project_name"
 }
 
-
 bst_list_command__parse_args() {
   command__define_current_command "list"
   command__parse_args "$@"
@@ -481,7 +467,6 @@ Print your project list.
 Usage: bst list"
 }
 
-
 bst_order_command__parse_args() {
   command__define_current_command "order"
   bst_projects__reset_filters
@@ -506,7 +491,7 @@ _bst_order_command__init_tags_filter() {
   local tag
   while read tag; do
     bst_project_filter_tags+=("${tag}")
-  done < <(system__string_array_values "${bst_order_tags}")
+  done < <(string__split "${bst_order_tags}")
 }
 
 _bst_order_command__order_command_for_filtered_projects() {
@@ -552,7 +537,6 @@ If both tag and name filters must be set, the name should be passed with
 --name option to avoid ambiguity with command."
 }
 
-
 bst_tame_command__parse_args() {
   command__define_current_command "tame"
   command__with_option "t:tags:bst_taming_tags"
@@ -585,7 +569,7 @@ _bst_tame_command__line_with_tags() {
   local tag
   while read tag; do
     line="${line}:${tag}"
-  done < <(system__string_array_values "${bst_taming_tags}")
+  done < <(string__split "${bst_taming_tags}")
   system__print "${line}"
 }
 
@@ -616,7 +600,6 @@ Options:
   -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project."
 }
 
-
 bst_program__run() {
   bst_config__load
   command__define_current_command "default"
@@ -632,7 +615,7 @@ _bst_default_command__run() {
 _bst_default_command__run_command() {
   local command="$1"
   local accepted=("config" "free" "list" "order" "tame")
-  system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
+  array__contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
   shift 1
   bst_${command}_command__parse_args "$@"
 }
@@ -655,6 +638,5 @@ Commands:
 
 Run 'bst command --help' for more information on a command."
 }
-
 
 [[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true

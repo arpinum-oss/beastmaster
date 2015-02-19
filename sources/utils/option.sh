@@ -13,13 +13,13 @@ option__value() {
 }
 
 option__short_option_from_string() {
-  token__at 1 "$1"
+  string__token_at 1 "$1"
 }
 
 option__long_option_from_string() {
-  token__at 2 "$1"
+  string__token_at 2 "$1"
 }
 
 option__variable_from_string() {
-  token__at 3 "$1"
+  string__token_at 3 "$1"
 }

@@ -30,7 +30,7 @@ _bst_tame_command__line_with_tags() {
   local tag
   while read tag; do
     line="${line}:${tag}"
-  done < <(system__string_array_values "${bst_taming_tags}")
+  done < <(string__split "${bst_taming_tags}")
   system__print "${line}"
 }
 

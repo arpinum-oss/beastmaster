@@ -13,7 +13,7 @@ _bst_default_command__run() {
 _bst_default_command__run_command() {
   local command="$1"
   local accepted=("config" "free" "list" "order" "tame")
-  system__array_contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
+  array__contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
   shift 1
   bst_${command}_command__parse_args "$@"
 }

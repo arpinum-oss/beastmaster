@@ -22,7 +22,7 @@ _bst_order_command__init_tags_filter() {
   local tag
   while read tag; do
     bst_project_filter_tags+=("${tag}")
-  done < <(system__string_array_values "${bst_order_tags}")
+  done < <(string__split "${bst_order_tags}")
 }
 
 _bst_order_command__order_command_for_filtered_projects() {
