@@ -1,4 +1,4 @@
-# Beastmaster (bst) [![Travis build status]](https://travis-ci.org/arpinum/beastmaster) [![Drone build status]](https://drone.io/github.com/arpinum/beastmaster/latest)
+# Beastmaster (bst) - beta [![Travis build status]](https://travis-ci.org/arpinum/beastmaster) [![Drone build status]](https://drone.io/github.com/arpinum/beastmaster/latest)
 
 > A beast does not know that he is a beast, and the nearer a man gets to being a beast, the less he knows it.
 > <cite>(George MacDonald)</cite>
@@ -9,15 +9,11 @@ Example:
 
     bst order my_project git status
 
-## Development progress
+## Installation
 
-Overall progress: **70%**, stay tuned :)
+Copy [bst latest release] in your `/usr/local/bin` or use the automated script below:
 
-* bst config: done \o/
-* bst free: done \o/
-* bst list: done \o/
-* bst order: todo
-* bst tame: done \o/
+    \curl -sSL http://git.io/A3R2 | bash -s
 
 ## Taming projects
 
@@ -118,3 +114,4 @@ You should have received a copy of the GNU General Public License along with **B
 [Commander]: https://github.com/tj/commander
 [Commander.js]: https://github.com/tj/commander.js
 [Jump]: https://github.com/flavio/jump
+[bst latest release]: https://github.com/arpinum/beastmaster/blob/master/releases/bst

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+function program() {
+  local latest_release="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/bst"
+  curl -sSL -o "/usr/local/bin" "${latest_release}"
+}
+
+program
