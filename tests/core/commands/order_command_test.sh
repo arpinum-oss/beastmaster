@@ -16,6 +16,20 @@ should_print_usage_with_no_argument() {
   assertion__string_contains "${message}" "Usages: bst order"
 }
 
+should_order_command_for_all_projects() {
+  create_config_dir_for_tests
+  local bowling_kata_dir="$(create_project_dir_for_test "bowling-kata")"
+  echo "bowling-kata:${bowling_kata_dir}" > "$(bst_config__config_file)"
+  local tennis_kata_dir="$(create_project_dir_for_test "tennis-kata")"
+  echo "tennis-kata:${tennis_kata_dir}" >> "$(bst_config__config_file)"
+  local result
+
+  result="$(bst_order_command__parse_args --all pwd)"
+
+  assertion__status_code_is_success $?
+  assertion__equal "${bowling_kata_dir}"$'\n'"${tennis_kata_dir}" "${result}"
+}
+
 should_order_command_for_project_with_name() {
   create_config_dir_for_tests
   local bowling_kata_dir="$(create_project_dir_for_test "bowling-kata")"

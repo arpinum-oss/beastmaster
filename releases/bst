@@ -470,9 +470,10 @@ Usage: bst list"
 bst_order_command__parse_args() {
   command__define_current_command "order"
   bst_projects__reset_filters
-  command__with_option "v:verbose:bst_verbose_orders"
+  command__with_option "a:all:bst_order_all"
   command__with_option "n:name:bst_order_name"
   command__with_option "t:tags:bst_order_tags"
+  command__with_option "v:verbose:bst_verbose_orders"
   command__parse_args "$@"
 }
 
@@ -480,6 +481,7 @@ _bst_order_command__run() {
   (( $# == 0 )) && command__help_triggered
   [[ -n "${bst_order_tags}" ]] && _bst_order_command__init_tags_filter
   [[ -n "${bst_order_name}" ]] && bst_project_filter_name="${bst_order_name}"
+  [[ -n "${bst_order_all}" ]] && bst_project_filter_name="*"
   if bst_projects__filters_empty; then
     bst_project_filter_name="$1"
     shift 1
@@ -526,6 +528,7 @@ Usages: bst order [options] [project_name] command
     or: bst order --name=project_name --tags=tag1 command
 
 Options:
+  -a, --all                 Consider all projects.
   -n, --name=project_name   Only consider projects matching the name.
   -t, --tags=tag1[,tagN]    Only consider projects having one of these tags.
   -v, --verbose             Print more information.
