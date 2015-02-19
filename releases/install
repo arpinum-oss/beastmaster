@@ -2,7 +2,9 @@
 
 program() {
   local latest_release="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/bst"
-  curl -sSL -o "/usr/local/bin/bst" "${latest_release}"
+  local target="/usr/local/bin/bst"
+  curl -sSL -o "${target}" "${latest_release}"
+  chmod +x "${target}"
 }
 
 program
