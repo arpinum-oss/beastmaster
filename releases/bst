@@ -556,11 +556,19 @@ bst_tame_command__parse_args() {
 }
 
 _bst_tame_command__run() {
-  [[ -z "${bst_taming_dir}" ]] && bst_taming_dir="$(pwd)" || true
+  _bst_tame_command_init_taming_dir
   if [[ -n "${bst_taming_root}" ]]; then
     _bst_tame_command__try_add_all_child_projects_in_directory "$@"
   else
     _bst_tame_command__try_add_the_project_in_directory "$@"
+  fi
+}
+
+_bst_tame_command_init_taming_dir() {
+  if [[ -n "${bst_taming_dir}" ]]; then
+    bst_taming_dir="$(system__dir_path "${bst_taming_dir}")"
+  else
+    bst_taming_dir="$(pwd)"
   fi
 }
 

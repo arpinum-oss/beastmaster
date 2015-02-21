@@ -32,7 +32,18 @@ should_add_distant_project_to_project_list() {
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
-  bst_tame_command__parse_args --dir="${directory}"
+  bst_tame_command__parse_args --directory="${directory}"
+
+  local expected="my_uber_project:${directory}"
+  assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
+should_add_relative_project_to_project_list() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "my_uber_project")"
+
+  (cd "${directory}"; bst_tame_command__parse_args --directory="../my_uber_project")
 
   local expected="my_uber_project:${directory}"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
