@@ -11,7 +11,7 @@ should_fail_for_any_additionnal_argument() {
   message="$(bst_list_command__parse_args "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst list: wrong args count -- 1 instead of 0"
+  assertion__string_contains "${message}" "Wrong args count -- 1 instead of 0"
 }
 
 should_print_simple_projects() {

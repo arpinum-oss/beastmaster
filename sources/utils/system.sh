@@ -15,6 +15,10 @@ system__dir_name() {
   system__print "${1##*\/}"
 }
 
+system__dir_path() {
+  (cd "$1"; pwd)
+}
+
 system__ask_for_confirmation() {
   [[ "${BST_INTERACTIVE}" == "no" ]] && return 0
   system__print "$1 (y/n) "

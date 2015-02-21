@@ -11,7 +11,7 @@ should_fail_for_any_additionnal_argument() {
   message="$(bst_free_command__parse_args "project" "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst free: wrong args count -- 2 instead of 1"
+  assertion__string_contains "${message}" "Wrong args count -- 2 instead of 1"
 }
 
 should_remove_project_from_config() {

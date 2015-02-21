@@ -44,10 +44,7 @@ _bst_order_command__order_command() {
 }
 
 _bst_order_command__check_directory() {
-  if [[ ! -d "${directory}" ]]; then
-    system__print_line "${directory} does not exist for ${name}."
-    exit 1
-  fi
+  [[ ! -d "${directory}" ]] && command__fail "${directory} does not exist for ${name}."
 }
 
 _bst_order_command__usage() {

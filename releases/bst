@@ -71,6 +71,10 @@ system__dir_name() {
   system__print "${1##*\/}"
 }
 
+system__dir_path() {
+  (cd "$1"; pwd)
+}
+
 system__ask_for_confirmation() {
   [[ "${BST_INTERACTIVE}" == "no" ]] && return 0
   system__print "$1 (y/n) "
@@ -146,10 +150,10 @@ option__variable_from_string() {
 }
 
 command__parse_args() {
-  bst_command_args=("$@")
-  _command__parse_options
-  bst_command_args=("${bst_command_args[@]}")
-  $(_namespace)run "${bst_command_args[@]}"
+  bst_read_options=0
+  _command__parse_options "$@"
+  shift ${bst_read_options}
+  $(_namespace)run "$@"
 }
 
 command__define_current_command() {
@@ -174,18 +178,18 @@ command__check_args_count() {
 
 _command__parse_options() {
   local index
-  for (( index = 0; index < ${#bst_command_args[@]}; index++ )) do
-    local argument="${bst_command_args[${index}]}"
+  for (( index = 1; index <= $#; index++ )) do
+    local argument="${!index}"
     case "${argument}" in
       -h|--help)
       command__help_triggered
       ;;
       --*)
-      unset bst_command_args[${index}]
+      (( bst_read_options++ ))
       _command__handle_long_option "${argument}"
       ;;
       -*)
-      unset bst_command_args[${index}]
+      (( bst_read_options++ ))
       _command__handle_short_option "${argument}"
       ;;
       *)
@@ -224,21 +228,30 @@ _command__handle_option() {
 }
 
 _command__illegal_option_parsed() {
-  system__print_line "$(_command__name): illegal option -- $1"
+  system__print_line "Illegal option -- $1"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
 _command__wrong_args_count() {
-  system__print_line "$(_command__name): wrong args count -- $1 instead of $2 at most"
+  command__bad_usage "Wrong args count -- $1 instead of $2 at most"
+}
+
+command__bad_usage() {
+  system__print_line "$1"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
+command__fail() {
+  system__print_line "$1"
+  exit 1
+}
+
 command__illegal_command_parsed() {
-  system__print_line "$(_command__name): illegal command -- $1"
+  system__print_line "Illegal command -- $1"
   system__print_new_line
   _command__print_usage
   exit 1
@@ -358,11 +371,9 @@ _bst_config_command__run() {
 }
 
 _bst_config_command__check_editor() {
-  if [[ -z "${EDITOR}" ]]; then
-    system__print_line "EDITOR environment variable must be set."
-    system__print_line "  ex: export EDITOR=/usr/bin/nano (or vi if you like 50 shades of grey)"
-    exit 1
-  fi
+  local error="EDITOR environment variable must be set.
+  ex: export EDITOR=/usr/bin/nano (or vi if you like 50 shades of grey)"
+  [[ -z "${EDITOR}" ]] && command__fail "${error}"
 }
 
 _bst_config_command__usage() {
@@ -404,8 +415,7 @@ _bst_free_command__check_project_exists() {
 }
 
 _bst_free_command__project_does_not_exist() {
-  system__print_line "No project named $1."
-  exit 1
+  command__fail "No project named $1."
 }
 
 _bst_free_command__line_must_be_kept() {
@@ -513,10 +523,7 @@ _bst_order_command__order_command() {
 }
 
 _bst_order_command__check_directory() {
-  if [[ ! -d "${directory}" ]]; then
-    system__print_line "${directory} does not exist for ${name}."
-    exit 1
-  fi
+  [[ ! -d "${directory}" ]] && command__fail "${directory} does not exist for ${name}."
 }
 
 _bst_order_command__usage() {
@@ -542,17 +549,40 @@ If both tag and name filters must be set, the name should be passed with
 
 bst_tame_command__parse_args() {
   command__define_current_command "tame"
+  command__with_option "d:directory:bst_taming_dir"
+  command__with_option "r:root:bst_taming_root"
   command__with_option "t:tags:bst_taming_tags"
   command__parse_args "$@"
 }
 
 _bst_tame_command__run() {
-  local directory="$(pwd)"
+  [[ -z "${bst_taming_dir}" ]] && bst_taming_dir="$(pwd)" || true
+  if [[ -n "${bst_taming_root}" ]]; then
+    _bst_tame_command__try_add_all_child_projects_in_directory "$@"
+  else
+    _bst_tame_command__try_add_the_project_in_directory "$@"
+  fi
+}
+
+_bst_tame_command__try_add_all_child_projects_in_directory() {
+  if (( $# > 0 )); then
+    command__bad_usage "bst tame: you should not tame root directory and provide a name."
+  else
+    local entry
+    for entry in ${bst_taming_dir}/*; do
+      if [[ -d "${entry}" ]]; then
+        _bst_tame_command__add_project "$(system__dir_name "${entry}")" "$(system__dir_path "${entry}")"
+      fi
+    done
+  fi
+}
+
+_bst_tame_command__try_add_the_project_in_directory() {
   if (( $# == 0 )); then
-    _bst_tame_command__add_project "$(system__dir_name "${directory}")" "${directory}"
+    _bst_tame_command__add_project "$(system__dir_name "${bst_taming_dir}")" "${bst_taming_dir}"
   else
     command__check_args_count 1 $#
-    _bst_tame_command__add_project "$1" "${directory}"
+    _bst_tame_command__add_project "$1" "${bst_taming_dir}"
   fi
 }
 
@@ -584,23 +614,28 @@ _bst_tame_command__check_project_collisions() {
 }
 
 _bst_tame_command__name_collision() {
-  system__print_line "A project named $1 already exists."
-  exit 1
+  command__fail "A project named $1 already exists."
 }
 
 _bst_tame_command__directory_collision() {
-  system__print_line "A project already exists at directory $1."
-  exit 1
+  command__fail "A project already exists at directory $1."
 }
 
 _bst_tame_command__usage() {
   system__print "\
-Add a project to your project list.
+Add one or more projects to the project list.
 
 Usage: bst tame [options] [project_name]
+             -> add single project
+   or: bst tame [options] --root
+             -> add all projects in the taming directory
 
 Options:
-  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project."
+  -d, --directory                 Set taming directory (default is current).
+  -r, --root                      Tame all child projects in the current directory.
+  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project.
+
+When directory is not set, the current one is considered as the taming directory."
 }
 
 bst_program__run() {

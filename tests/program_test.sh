@@ -16,7 +16,7 @@ should_fail_if_option_is_illegal() {
   message="$(bst_program__run --bleh)"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst: illegal option -- bleh"
+  assertion__string_contains "${message}" "Illegal option -- bleh"
 }
 
 should_fail_if_command_is_illegal() {
@@ -24,7 +24,7 @@ should_fail_if_command_is_illegal() {
   message="$(bst_program__run "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst: illegal command -- bleh"
+  assertion__string_contains "${message}" "Illegal command -- bleh"
 }
 
 should_call_config_command() {

@@ -1,8 +1,8 @@
 command__parse_args() {
-  bst_command_args=("$@")
-  _command__parse_options
-  bst_command_args=("${bst_command_args[@]}")
-  $(_namespace)run "${bst_command_args[@]}"
+  bst_read_options=0
+  _command__parse_options "$@"
+  shift ${bst_read_options}
+  $(_namespace)run "$@"
 }
 
 command__define_current_command() {
@@ -27,18 +27,18 @@ command__check_args_count() {
 
 _command__parse_options() {
   local index
-  for (( index = 0; index < ${#bst_command_args[@]}; index++ )) do
-    local argument="${bst_command_args[${index}]}"
+  for (( index = 1; index <= $#; index++ )) do
+    local argument="${!index}"
     case "${argument}" in
       -h|--help)
       command__help_triggered
       ;;
       --*)
-      unset bst_command_args[${index}]
+      (( bst_read_options++ ))
       _command__handle_long_option "${argument}"
       ;;
       -*)
-      unset bst_command_args[${index}]
+      (( bst_read_options++ ))
       _command__handle_short_option "${argument}"
       ;;
       *)
@@ -77,21 +77,30 @@ _command__handle_option() {
 }
 
 _command__illegal_option_parsed() {
-  system__print_line "$(_command__name): illegal option -- $1"
+  system__print_line "Illegal option -- $1"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
 _command__wrong_args_count() {
-  system__print_line "$(_command__name): wrong args count -- $1 instead of $2 at most"
+  command__bad_usage "Wrong args count -- $1 instead of $2 at most"
+}
+
+command__bad_usage() {
+  system__print_line "$1"
   system__print_new_line
   _command__print_usage
   exit 1
 }
 
+command__fail() {
+  system__print_line "$1"
+  exit 1
+}
+
 command__illegal_command_parsed() {
-  system__print_line "$(_command__name): illegal command -- $1"
+  system__print_line "Illegal command -- $1"
   system__print_new_line
   _command__print_usage
   exit 1

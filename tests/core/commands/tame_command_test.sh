@@ -1,5 +1,6 @@
 should_print_usage_for_help() {
   local message
+
   message="$(bst_tame_command__parse_args --help)"
 
   assertion__status_code_is_success $?
@@ -8,18 +9,30 @@ should_print_usage_for_help() {
 
 should_fail_for_any_additionnal_argument() {
   local message
+
   message="$(bst_tame_command__parse_args "project" "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "bst tame: wrong args count -- 2 instead of 1"
+  assertion__string_contains "${message}" "Wrong args count -- 2 instead of 1"
 }
 
-should_add_project_to_project_list() {
+should_add_current_project_to_project_list() {
   create_config_dir_for_tests
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
   (cd "${directory}"; bst_tame_command__parse_args)
+
+  local expected="my_uber_project:${directory}"
+  assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
+should_add_distant_project_to_project_list() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "my_uber_project")"
+
+  bst_tame_command__parse_args --dir="${directory}"
 
   local expected="my_uber_project:${directory}"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
@@ -54,6 +67,54 @@ _check_taming_with_tags() {
 
   local expected="my_uber_project:${directory}:java:maven:git"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
+should_add_all_child_projects_in_the_current_directory_to_project_list() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local root="$(create_project_dir_for_test "root")"
+  mkdir -p "${root}/first_project"
+  mkdir -p "${root}/second_project"
+
+  (cd "${root}"; bst_tame_command__parse_args --root)
+
+  local expected="first_project:${root}/first_project
+second_project:${root}/second_project"
+  assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
+should_add_all_child_projects_in_the_distant_directory_to_project_list() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local root="$(create_project_dir_for_test "root")"
+  mkdir -p "${root}/first_project"
+  mkdir -p "${root}/second_project"
+
+  bst_tame_command__parse_args --root --directory="${root}"
+
+  local expected="first_project:${root}/first_project
+second_project:${root}/second_project"
+  assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
+}
+
+wont_add_file_in_the_root_directory() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local root="$(create_project_dir_for_test "root")"
+  touch "${root}/some_file"
+
+  (cd "${root}"; bst_tame_command__parse_args --root)
+
+  assertion__equal "" "$(cat "$(bst_config__config_file)")"
+}
+
+should_fail_if_both_root_and_name_are_wanted_at_the_same_time() {
+  local message
+
+  message="$(cd "${TMP_DIR}"; bst_tame_command__parse_args --root "project_name")"
+
+  assertion__status_code_is_failure $?
+  assertion__string_contains "${message}" "bst tame: you should not tame root directory and provide a name."
 }
 
 wont_add_project_if_the_name_is_already_taken() {

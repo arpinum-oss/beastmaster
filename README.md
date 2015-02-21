@@ -29,6 +29,18 @@ You can choose a name if the default name does not suit you (the path basename):
 
     > bst tame cool_project
 
+If the directory is a root directory containing projects, you can tame them all with `--root`:
+
+    > ls
+    cool_project crasy_stuff
+    > bst tame --root
+    cool_project is now tamed!
+    crasy_stuff is now tamed!
+
+The taming directory is the current one but you can override this with `--directory`:
+
+    > bst tame --directory=~/code/my_project
+
 Since they all look the same you can tag your projects to recognize them. Use `--tags=name1,name2` option when taming:
 
     > bst tame --tags=cat_related,java

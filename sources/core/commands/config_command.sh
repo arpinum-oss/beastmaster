@@ -10,11 +10,9 @@ _bst_config_command__run() {
 }
 
 _bst_config_command__check_editor() {
-  if [[ -z "${EDITOR}" ]]; then
-    system__print_line "EDITOR environment variable must be set."
-    system__print_line "  ex: export EDITOR=/usr/bin/nano (or vi if you like 50 shades of grey)"
-    exit 1
-  fi
+  local error="EDITOR environment variable must be set.
+  ex: export EDITOR=/usr/bin/nano (or vi if you like 50 shades of grey)"
+  [[ -z "${EDITOR}" ]] && command__fail "${error}"
 }
 
 _bst_config_command__usage() {

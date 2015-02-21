@@ -30,8 +30,7 @@ _bst_free_command__check_project_exists() {
 }
 
 _bst_free_command__project_does_not_exist() {
-  system__print_line "No project named $1."
-  exit 1
+  command__fail "No project named $1."
 }
 
 _bst_free_command__line_must_be_kept() {
