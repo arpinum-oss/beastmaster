@@ -1,8 +1,8 @@
 bst_tame_command__parse_args() {
   command__define_current_command "tame"
-  command__with_option "d:directory:bst_taming_dir"
-  command__with_option "r:root:bst_taming_root"
-  command__with_option "t:tags:bst_taming_tags"
+  command__with_option "d:directory:string:bst_taming_dir"
+  command__with_option "r:root:none:bst_taming_root"
+  command__with_option "t:tags:string:bst_taming_tags"
   command__parse_args "$@"
 }
 
@@ -90,9 +90,9 @@ Usage: bst tame [options] [project_name]
              -> add all projects in the taming directory
 
 Options:
-  -d, --directory                 Set taming directory (default is current).
+  -d, --directory dir             Set taming directory (default is current).
   -r, --root                      Tame all child projects in the current directory.
-  -t, --tags=tag1[,tag2][,tagN]   Assign one or more tags to the project.
+  -t, --tags tag1[,tag2][,tagN]   Assign one or more tags to the project.
 
 When directory is not set, the current one is considered as the taming directory."
 }

@@ -5,6 +5,7 @@ setup() {
 
 should_print_usage_for_help() {
   local message
+
   message="$(bst_program__run --help)"
 
   assertion__status_code_is_success $?
@@ -13,18 +14,20 @@ should_print_usage_for_help() {
 
 should_fail_if_option_is_illegal() {
   local message
+
   message="$(bst_program__run --bleh)"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "Illegal option -- bleh"
+  assertion__string_contains "${message}" "Illegal option: bleh"
 }
 
 should_fail_if_command_is_illegal() {
   local message
+
   message="$(bst_program__run "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "Illegal command -- bleh"
+  assertion__string_contains "${message}" "Illegal command: bleh"
 }
 
 should_call_config_command() {

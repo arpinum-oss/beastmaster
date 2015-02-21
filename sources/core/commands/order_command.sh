@@ -1,10 +1,10 @@
 bst_order_command__parse_args() {
   command__define_current_command "order"
   bst_projects__reset_filters
-  command__with_option "a:all:bst_order_all"
-  command__with_option "n:name:bst_order_name"
-  command__with_option "t:tags:bst_order_tags"
-  command__with_option "v:verbose:bst_verbose_orders"
+  command__with_option "a:all:none:bst_order_all"
+  command__with_option "n:name:string:bst_order_name"
+  command__with_option "t:tags:string:bst_order_tags"
+  command__with_option "v:verbose:none:bst_verbose_orders"
   command__parse_args "$@"
 }
 
@@ -57,8 +57,8 @@ Usages: bst order [options] [project_name] command
 
 Options:
   -a, --all                 Consider all projects.
-  -n, --name=project_name   Only consider projects matching the name.
-  -t, --tags=tag1[,tagN]    Only consider projects having one of these tags.
+  -n, --name project_name   Only consider projects matching the name.
+  -t, --tags tag1[,tagN]    Only consider projects having one of these tags.
   -v, --verbose             Print more information.
 
 bst order options should be placed before command to not mess with command own

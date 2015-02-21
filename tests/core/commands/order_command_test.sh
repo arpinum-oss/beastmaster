@@ -50,7 +50,7 @@ should_order_command_for_project_with_name_as_option() {
   echo "bowling-kata:${bowling_kata_dir}" >> "$(bst_config__config_file)"
   local result
 
-  result="$(bst_order_command__parse_args --name=bowling-kata pwd)"
+  result="$(bst_order_command__parse_args --name bowling-kata pwd)"
 
   assertion__status_code_is_success $?
   assertion__equal "${bowling_kata_dir}" "${result}"
@@ -65,7 +65,7 @@ should_order_command_for_project_with_tag() {
   echo "tennis-kata:${tennis_kata_dir}:git" >> "$(bst_config__config_file)"
   local result
 
-  result="$(bst_order_command__parse_args --tags=kata,git pwd)"
+  result="$(bst_order_command__parse_args --tags kata,git pwd)"
 
   assertion__status_code_is_success $?
   assertion__equal "${bowling_kata_dir}"$'\n'"${tennis_kata_dir}" "${result}"
@@ -79,7 +79,7 @@ should_order_command_for_project_with_tag_and_name() {
   echo "tennis-kata:${tennis_kata_dir}:git" >> "$(bst_config__config_file)"
   local result
 
-  result="$(bst_order_command__parse_args --name=bowling-kata --tags=kata,git pwd)"
+  result="$(bst_order_command__parse_args --name bowling-kata --tags kata,git pwd)"
 
   assertion__status_code_is_success $?
   assertion__equal "${bowling_kata_dir}" "${result}"

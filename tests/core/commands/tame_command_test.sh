@@ -13,7 +13,7 @@ should_fail_for_any_additionnal_argument() {
   message="$(bst_tame_command__parse_args "project" "bleh")"
 
   assertion__status_code_is_failure $?
-  assertion__string_contains "${message}" "Wrong args count -- 2 instead of 1"
+  assertion__string_contains "${message}" "Wrong args count: 2 instead of 1"
 }
 
 should_add_current_project_to_project_list() {
@@ -32,7 +32,7 @@ should_add_distant_project_to_project_list() {
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
-  bst_tame_command__parse_args --directory="${directory}"
+  bst_tame_command__parse_args --directory "${directory}"
 
   local expected="my_uber_project:${directory}"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
@@ -43,7 +43,7 @@ should_add_relative_project_to_project_list() {
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
-  (cd "${directory}"; bst_tame_command__parse_args --directory="../my_uber_project")
+  (cd "${directory}"; bst_tame_command__parse_args --directory "../my_uber_project")
 
   local expected="my_uber_project:${directory}"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
@@ -74,7 +74,7 @@ _check_taming_with_tags() {
   touch "$(bst_config__config_file)"
   local directory="$(create_project_dir_for_test "my_uber_project")"
 
-  (cd "${directory}"; bst_tame_command__parse_args "${option}=java,maven,git")
+  (cd "${directory}"; bst_tame_command__parse_args "${option}" "java,maven,git")
 
   local expected="my_uber_project:${directory}:java:maven:git"
   assertion__equal "${expected}" "$(cat "$(bst_config__config_file)")"
@@ -101,7 +101,7 @@ should_add_all_child_projects_in_the_distant_directory_to_project_list() {
   mkdir -p "${root}/first_project"
   mkdir -p "${root}/second_project"
 
-  bst_tame_command__parse_args --root --directory="${root}"
+  bst_tame_command__parse_args --root --directory "${root}"
 
   local expected="first_project:${root}/first_project
 second_project:${root}/second_project"

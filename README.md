@@ -39,11 +39,11 @@ If the directory is a root directory containing projects, you can tame them all 
 
 The taming directory is the current one but you can override this with `--directory`:
 
-    > bst tame --directory=~/code/my_project
+    > bst tame --directory ~/code/my_project
 
-Since they all look the same you can tag your projects to recognize them. Use `--tags=name1,name2` option when taming:
+Since they all look the same you can tag your projects to recognize them. Use `--tags name1,name2` option when taming:
 
-    > bst tame --tags=cat_related,java
+    > bst tame --tags cat_related,java
 
 For simplicity sake, tags won't work with comma or eol (oh really?) in it.
 
@@ -57,9 +57,9 @@ If you want to refresh a single project:
 
     > bst order my_project git pull origin master
 
-To check the status of all projects tagged as git:
+To check the status of all projects tagged as github:
 
-    > bst order --tags=git git status
+    > bst order --tags github git status
 
 To run the tests of all projects named like "js_project*"
 
