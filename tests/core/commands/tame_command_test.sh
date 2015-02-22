@@ -136,8 +136,8 @@ wont_add_project_if_the_name_is_already_taken() {
 
   message="$(cd "${directory}"; bst_tame_command__parse_args "taken_name")"
 
-  assertion__status_code_is_failure $?
-  assertion__equal "A project named taken_name already exists." "${message}"
+  assertion__status_code_is_success $?
+  assertion__equal "A project named taken_name already exists so project won't be tamed." "${message}"
 }
 
 wont_add_project_if_the_directory_is_already_taken() {
@@ -148,6 +148,6 @@ wont_add_project_if_the_directory_is_already_taken() {
 
   message="$(cd "${directory}"; bst_tame_command__parse_args)"
 
-  assertion__status_code_is_failure $?
-  assertion__equal "A project already exists at directory ${directory}." "${message}"
+  assertion__status_code_is_success $?
+  assertion__equal "A project already exists at directory ${directory} so project won't be tamed." "${message}"
 }
