@@ -151,3 +151,27 @@ wont_add_project_if_the_directory_is_already_taken() {
   assertion__status_code_is_success $?
   assertion__equal "A project already exists at directory ${directory} so project won't be tamed." "${message}"
 }
+
+wont_add_project_if_the_name_contains_a_colon() {
+  create_config_dir_for_tests
+  system__print_line "taken_name:directory" > "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "my_uber_project")"
+  local message
+
+  message="$(cd "${directory}"; bst_tame_command__parse_args "with:colon")"
+
+  assertion__status_code_is_success $?
+  assertion__equal "The project name contains a colon which is forbidden so project won't be tamed." "${message}"
+}
+
+wont_add_project_if_a_tag_contains_a_colon() {
+  create_config_dir_for_tests
+  touch "$(bst_config__config_file)"
+  local directory="$(create_project_dir_for_test "my_uber_project")"
+  local message
+
+  message="$(cd "${directory}"; bst_tame_command__parse_args -t "java,mav:en")"
+
+  assertion__status_code_is_success $?
+  assertion__equal "A tag contains a colon which is forbidden so project won't be tamed." "${message}"
+}

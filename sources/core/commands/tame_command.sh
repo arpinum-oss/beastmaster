@@ -48,7 +48,7 @@ _bst_tame_command__try_add_the_project_in_directory() {
 _bst_tame_command__add_project() {
   local name="$1"
   local directory="$2"
-  _bst_tame_command__check_project_collisions "${name}" "${directory}" || return 0
+  _bst_tame_command__check_if_project_can_be_tamed "${name}" "${directory}" || return 0
   system__ask_for_confirmation "Tame ${directory} as ${name}?" || return 0
   local line="${name}:${directory}"
   line="$(_bst_tame_command__line_with_tags "${line}")"
@@ -65,14 +65,43 @@ _bst_tame_command__line_with_tags() {
   system__print "${line}"
 }
 
-_bst_tame_command__check_project_collisions() {
+_bst_tame_command__check_if_project_can_be_tamed() {
   local name="$1"
   local directory="$2"
-  bst_projects__exists_with_name "${name}" && \
-    system__print_line "A project named "${name}" already exists so project won't be tamed." && \
+  _bst_tame_command__check_name_collision "${name}" || return 1
+  _bst_tame_command__check_if_name_contains_reserved_characters "${name}" || return 1
+  _bst_tame_command__check_if_a_tag_contains_reserved_characters || return 1
+  _bst_tame_command__check_directory_collision "${directory}" || return 1
+  return 0
+}
+
+_bst_tame_command__check_name_collision() {
+  bst_projects__exists_with_name "$1" && \
+    system__print_line "A project named $1 already exists so project won't be tamed." && \
     return 1
-  bst_projects__exists_with_directory "${directory}" && \
-    system__print_line "A project already exists at directory ${directory} so project won't be tamed." && \
+  return 0  
+}
+
+_bst_tame_command__check_if_name_contains_reserved_characters() {
+  [[ "$1" == *:* ]] && \
+    system__print_line "The project name contains a colon which is forbidden so project won't be tamed." && \
+    return 1
+  return 0
+}
+
+_bst_tame_command__check_if_a_tag_contains_reserved_characters() {
+  local tag
+  while read tag; do
+    [[ "${tag}" == *:* ]] && \
+      system__print_line "A tag contains a colon which is forbidden so project won't be tamed." && \
+      return 1
+  done < <(string__split "${bst_taming_tags}")
+  return 0
+}
+
+_bst_tame_command__check_directory_collision() {
+  bst_projects__exists_with_directory "$1" && \
+    system__print_line "A project already exists at directory $1 so project won't be tamed." && \
     return 1
   return 0
 }
