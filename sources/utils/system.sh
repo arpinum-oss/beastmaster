@@ -24,5 +24,5 @@ system__ask_for_confirmation() {
   system__print "$1 (y/n) "
   local response=""
   read response < /dev/tty
-  [[ "${response}" == "y" ]]
+  [[ "${response}" == "y" || -z "${response}" ]]
 }
