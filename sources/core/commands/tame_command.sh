@@ -117,7 +117,7 @@ Usage: bst tame [options] [project_name]
 
 Options:
   -d, --directory dir             Set taming directory (default is current).
-  -r, --root                      Tame all child projects in the current directory.
+  -r, --root                      Tame all child projects in the taming directory.
   -t, --tags tag1[,tag2][,tagN]   Assign one or more tags to the project.
 
 When directory is not set, the current one is considered as the taming directory."
