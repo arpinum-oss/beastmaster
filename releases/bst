@@ -678,7 +678,7 @@ Usage: bst tame [options] [project_name]
 
 Options:
   -d, --directory dir             Set taming directory (default is current).
-  -r, --root                      Tame all child projects in the current directory.
+  -r, --root                      Tame all child projects in the taming directory.
   -t, --tags tag1[,tag2][,tagN]   Assign one or more tags to the project.
 
 When directory is not set, the current one is considered as the taming directory."
@@ -720,7 +720,10 @@ Commands:
   order       Execute a command in the project directory
   tame        Add a project to your project list
 
-Run 'bst command --help' for more information on a command."
+Run 'bst command --help' for more information on a command.
+
+Build date: ${BST_BUILD_DATE}"
 }
 
+BST_BUILD_DATE="2015/02/23, 22h43m24s"
 [[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true

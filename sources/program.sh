@@ -34,5 +34,7 @@ Commands:
   order       Execute a command in the project directory
   tame        Add a project to your project list
 
-Run 'bst command --help' for more information on a command."
+Run 'bst command --help' for more information on a command.
+
+Build date: ${BST_BUILD_DATE}"
 }

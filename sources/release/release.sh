@@ -30,6 +30,8 @@ _bst_release__concatenate_sources_in_release_file() {
 }
 
 _bst_release__append_program_run_in_release_file() {
+  _bst_release__append_to_release_file "BST_BUILD_DATE=\"$(date +"%Y/%m/%d, %Hh%Mm%Ss")\""
+  _bst_release__append_to_release_file "\n"
   _bst_release__append_to_release_file '[[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true'
 }
 
