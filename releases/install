@@ -3,8 +3,15 @@
 program() {
   local latest_release="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/bst"
   local target="/usr/local/bin/bst"
-  curl -sSL -o "${target}" "${latest_release}"
-  chmod +x "${target}"
+
+  curl -sSL -o "${target}" "${latest_release}" && chmod +x "${target}"
+
+  if (( $? != 0 )); then
+    printf "Impossible to download Beastmaster to ${target}.\n"
+    exit 1
+  else
+    printf "Beastmaster has been successfully downloaded to ${target}.\n"
+  fi
 }
 
 program

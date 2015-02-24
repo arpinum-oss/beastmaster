@@ -31,7 +31,6 @@ _bst_release__concatenate_sources_in_release_file() {
 
 _bst_release__append_program_run_in_release_file() {
   _bst_release__append_to_release_file "BST_BUILD_DATE=\"$(date +"%Y/%m/%d, %Hh%Mm%Ss")\""
-  _bst_release__append_to_release_file "\n"
   _bst_release__append_to_release_file '[[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true'
 }
 
@@ -41,7 +40,7 @@ _bst_release__append_module_to_release_file() {
 
 _bst_release__append_file_to_release_file() {
   cat "$1" >> "$(bst_release__get_released_artifact_file)"
-  _bst_release__append_to_release_file "\n"
+  _bst_release__append_to_release_file ""
 }
 
 _bst_release__make_release_file_executable() {
@@ -49,7 +48,7 @@ _bst_release__make_release_file_executable() {
 }
 
 _bst_release__append_to_release_file() {
-  printf "$1" >> "$(bst_release__get_released_artifact_file)"
+  printf "$1\n" >> "$(bst_release__get_released_artifact_file)"
 }
 
 bst_release__get_released_artifact_file() {

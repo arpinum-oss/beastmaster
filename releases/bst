@@ -745,5 +745,5 @@ Run 'bst command --help' for more information on a command.
 Build date: ${BST_BUILD_DATE}"
 }
 
-BST_BUILD_DATE="2015/02/24, 13h42m51s"
+BST_BUILD_DATE="2015/02/24, 14h02m13s"
 [[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true
