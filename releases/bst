@@ -18,6 +18,7 @@ bst_config__load() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${HOME}/.bst"
   BST_INTERACTIVE="yes"
+  BST_INSTALL_URL="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/install"
   _bst_config__ensure_config_file_exists
 }
 
@@ -559,6 +560,23 @@ If both tag and name filters must be set, the name should be passed with
 --name option to avoid ambiguity with command."
 }
 
+bst_update_command__parse_args() {
+  command__define_current_command "update"
+  command__parse_args "$@"
+}
+
+_bst_update_command__run() {
+  command__check_args_count 0 $#
+  \curl -sSL "${BST_INSTALL_URL}" | bash -s
+}
+
+_bst_update_command__usage() {
+  system__print "\
+Download and update beastmaster.
+
+Usage: bst update"
+}
+
 bst_tame_command__parse_args() {
   command__define_current_command "tame"
   command__with_option "d:directory:string:bst_taming_dir"
@@ -698,7 +716,7 @@ _bst_default_command__run() {
 
 _bst_default_command__run_command() {
   local command="$1"
-  local accepted=("config" "free" "list" "order" "tame")
+  local accepted=("config" "free" "list" "order" "update" "tame")
   array__contains "${command}" "${accepted[@]}" || command__illegal_command_parsed "${command}"
   shift 1
   bst_${command}_command__parse_args "$@"
@@ -708,7 +726,8 @@ _bst_default_command__usage() {
   system__print "\
 Usage: bst command [arg...]
 
-A Bash tool which can run any command in your favorite projects (aka pets).
+Beastmaster is a Bash tool which can run any command in your favorite projects
+(aka pets).
 
 Options:
   -h, --help  Print usage
@@ -718,6 +737,7 @@ Commands:
   free        Remove a project from your project list
   list        Print your project list
   order       Execute a command in the project directory
+  update      Download and update beastmaster
   tame        Add a project to your project list
 
 Run 'bst command --help' for more information on a command.
@@ -725,5 +745,5 @@ Run 'bst command --help' for more information on a command.
 Build date: ${BST_BUILD_DATE}"
 }
 
-BST_BUILD_DATE="2015/02/23, 22h43m24s"
+BST_BUILD_DATE="2015/02/24, 13h42m51s"
 [[ "$0" == "${BASH_SOURCE[0]}" ]] && bst_program__run "$@" || true

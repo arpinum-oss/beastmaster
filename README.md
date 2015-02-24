@@ -103,6 +103,12 @@ Example:
     cool-project:/home/alone/dev/cool-project:java:git:hobby
     bowling-kata:/home/alone/dev/kata/bowling-kata:python:training
 
+## Update Beastmaster
+
+**Beastmaster** can be updated with `update` command, provided you have curl installed.
+
+    > bst update
+
 ## Thanks
 
 I would like to thank those awesome and inspiring projects below. I have learn a lot using them.

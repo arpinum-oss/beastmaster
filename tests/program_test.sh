@@ -70,6 +70,16 @@ should_call_order_command() {
   assertion__equal --help "$(database__get "command_arg")"
 }
 
+should_call_update_command() {
+  mock__make_function_call "bst_update_command__parse_args" "_capture_call"
+
+  ( bst_program__run "update" --help )
+
+  assertion__status_code_is_success $?
+  assertion__equal "true" "$(database__get "command_called")"
+  assertion__equal --help "$(database__get "command_arg")"
+}
+
 should_call_tame_command() {
   mock__make_function_call "bst_tame_command__parse_args" "_capture_call"
 

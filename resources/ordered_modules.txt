@@ -11,5 +11,6 @@ core/commands/config_command
 core/commands/free_command
 core/commands/list_command
 core/commands/order_command
+core/commands/update_command
 core/commands/tame_command
 program
