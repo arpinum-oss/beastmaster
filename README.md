@@ -3,7 +3,7 @@
 > A beast does not know that he is a beast, and the nearer a man gets to being a beast, the less he knows it.
 > <cite>(George MacDonald)</cite>
 
-**Beastmaster** is a Bash tool which can run any command in your favorite projects (aka projects).
+**Beastmaster** is a Bash tool which can run any command in your favorite projects (aka pets).
 
 Example:
 
