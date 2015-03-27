@@ -7,7 +7,7 @@ function _run_tests() {
   bst_release__concatenate_sources_in_release_file
   source "$(bst_release__get_released_artifact_file)"
   _override_bst_global_variables
-  source "${TESTS_DIR}/shebang_unit" "$@" "${TESTS_DIR}"
+  source "${TESTS_DIR}/shebang-unit" "$@" "${TESTS_DIR}"
   _remove_tmp_dir
 }
 
