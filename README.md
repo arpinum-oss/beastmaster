@@ -97,7 +97,7 @@ Pro tip: if the `EDITOR` global variable is set, you can also use the `config` s
 The config file use this simple convention:
 
     name:path:tag1:tag2
-    
+
 Example:
 
     cool-project:/home/alone/dev/cool-project:java:git:hobby
@@ -126,10 +126,10 @@ Copyright (C) 2015, Arpinum
 
 You should have received a copy of the GNU General Public License along with **Beastmaster**.  If not, see [http://www.gnu.org/licenses/lgpl.html].
 
-[http://www.gnu.org/licenses/lgpl.html]: http://www.gnu.org/licenses/lgpl.html    
+[http://www.gnu.org/licenses/lgpl.html]: http://www.gnu.org/licenses/lgpl.html
 [Travis build status]: https://travis-ci.org/arpinum/beastmaster.png?branch=master
 [Drone build status]: https://drone.io/github.com/arpinum/beastmaster/status.png
 [Commander]: https://github.com/tj/commander
 [Commander.js]: https://github.com/tj/commander.js
 [Jump]: https://github.com/flavio/jump
-[bst latest release]: https://github.com/arpinum/beastmaster/blob/master/releases/bst
+[bst latest release]: https://github.com/arpinum-oss/beastmaster/blob/master/releases/bst

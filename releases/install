@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 program() {
-  local latest_release="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/bst"
+  local latest_release="https://raw.githubusercontent.com/arpinum-oss/beastmaster/master/releases/bst"
   local target="/usr/local/bin/bst"
 
   curl -sSL -o "${target}" "${latest_release}" && chmod +x "${target}"

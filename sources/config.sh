@@ -2,7 +2,7 @@ bst_config__load() {
   BST_VALUE_SEPARATOR=","
   BST_CONFIG_DIR="${HOME}/.bst"
   BST_INTERACTIVE="yes"
-  BST_INSTALL_URL="https://raw.githubusercontent.com/arpinum/beastmaster/master/releases/install"
+  BST_INSTALL_URL="https://raw.githubusercontent.com/arpinum-oss/beastmaster/master/releases/install"
   _bst_config__ensure_config_file_exists
 }
 
