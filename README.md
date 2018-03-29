@@ -1,5 +1,4 @@
-# Beastmaster (bst) - beta [![Travis build status]](https://travis-ci.org/arpinum-oss/beastmaster) [![Drone build status]](https://drone.io/github.com/arpinum-oss/beastmaster/latest)
-
+# Beastmaster (bst) - beta [![Travis build status]](https://travis-ci.org/arpinum-oss/beastmaster)
 > A beast does not know that he is a beast, and the nearer a man gets to being a beast, the less he knows it.
 > <cite>(George MacDonald)</cite>
 
@@ -128,7 +127,6 @@ You should have received a copy of the GNU General Public License along with **B
 
 [http://www.gnu.org/licenses/lgpl.html]: http://www.gnu.org/licenses/lgpl.html
 [Travis build status]: https://travis-ci.org/arpinum-oss/beastmaster.png?branch=master
-[Drone build status]: https://drone.io/github.com/arpinum-oss/beastmaster/status.png
 [Commander]: https://github.com/tj/commander
 [Commander.js]: https://github.com/tj/commander.js
 [Jump]: https://github.com/flavio/jump
